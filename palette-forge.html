@@ -1,0 +1,2771 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+   Palette Forge — an offline RO sprite-palette studio
+   ◆ Made by Sanngridr — for RagnaRocha & the rAthena community ◆
+   Single self-contained file. Free to use; a credit to Sanngridr is appreciated.
+  ============================================================
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palette Forge — RO Sprite Palette Editor</title>
+<style>
+:root{
+  /* Light — Ragnarok Online classic UI (default) */
+  --bg:#c7c2b5; --bg2:#d7d2c7; --panel:#edece5; --panel2:#e1ded3;
+  --line:#b3aa99; --line2:#9aa1b0;
+  --txt:#262626; --dim:#5c606a; --faint:#8b8f99;
+  --gold:#3f6aa6; --gold-d:#2d4f80; --gold-txt:#ffffff; --gold-h:#4d7ab8;
+  --blue:#3f74c8; --blue-d:#2d5499;
+  --pink:#cf2bb0; --pink-soft:#e85fd0;
+  --lock:#c8392f; --good:#2c8f56;
+  --header-from:#6086bd; --header-to:#3a5c93; --header-txt:#ffffff; --header-dim:#dbe5f5;
+  --btn-hover-bg:#d4e2f5; --btn-hover-bd:#7d9cc8;
+  --check1:#c3bfb4; --check2:#ccc8bd; --check1s:#d4d0c6; --check2s:#dedacf;
+  --ghost-hover:#00000010;
+  --radius:7px;
+  --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+body.dark{
+  /* Dark theme */
+  --bg:#14161c; --bg2:#1b1e26; --panel:#1f232d; --panel2:#262b37;
+  --line:#333a48; --line2:#3f4858;
+  --txt:#e6e9f0; --dim:#9aa3b4; --faint:#69728a;
+  --gold:#e8b14b; --gold-d:#bb8a2c; --gold-txt:#241a02; --gold-h:#f0bd5b;
+  --blue:#5b9dff; --blue-d:#3f74c8;
+  --pink:#ff3df0; --pink-soft:#ff7bf2;
+  --lock:#ff6b6b; --good:#54d18c;
+  --header-from:#1d212b; --header-to:#171a22; --header-txt:var(--txt); --header-dim:var(--dim);
+  --btn-hover-bg:#2f3645; --btn-hover-bd:#4d586b;
+  --check1:#2a2f3a; --check2:#222630; --check1s:#21252e; --check2s:#1a1d25;
+  --ghost-hover:#ffffff0d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--txt); font-family:var(--sans);
+  font-size:13px; overflow:hidden; user-select:none;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;cursor:pointer;color:inherit}
+input,select{font-family:inherit}
+.hidden{display:none!important}
+
+/* ===== Layout ===== */
+#app{display:flex;flex-direction:column;height:100vh}
+header{
+  display:flex;align-items:center;gap:6px;padding:8px 12px;
+  background:linear-gradient(180deg,var(--header-from),var(--header-to));color:var(--header-txt);
+  border-bottom:1px solid var(--line);flex-shrink:0;
+}
+.brand{display:flex;align-items:center;gap:9px;margin-right:8px}
+.brand .mark{
+  width:24px;height:24px;flex-shrink:0;
+  background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAGlmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4xLWMwMDMgNzkuOTY5MGE4NywgMjAyNS8wMy8wNi0xOToxMjowMyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIiB4bWxuczpwaG90b3Nob3A9Imh0dHA6Ly9ucy5hZG9iZS5jb20vcGhvdG9zaG9wLzEuMC8iIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI2LjkgKFdpbmRvd3MpIiB4bXA6Q3JlYXRlRGF0ZT0iMjAyNi0wNi0yMVQxMzo0MDoyNy0wMzowMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyNi0wNi0yMVQxNDozMjo1MS0wMzowMCIgeG1wOk1vZGlmeURhdGU9IjIwMjYtMDYtMjFUMTQ6MzI6NTEtMDM6MDAiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NmFiZjM4YTUtNzhjOS1iYzQ0LTgyNTgtZWEzNzc4ZDI4MTQwIiB4bXBNTTpEb2N1bWVudElEPSJhZG9iZTpkb2NpZDpwaG90b3Nob3A6YTkxMWRiZmYtMWVhYS04NzQ2LWJkNmMtNmM0YTYxZWEyOGE0IiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6NTllMWUzNTItMGQ1Ni05MDQ4LWFkZmEtY2UzNGUxNTk1M2IwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyI+IDx4bXBNTTpIaXN0b3J5PiA8cmRmOlNlcT4gPHJkZjpsaSBzdEV2dDphY3Rpb249ImNyZWF0ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6NTllMWUzNTItMGQ1Ni05MDQ4LWFkZmEtY2UzNGUxNTk1M2IwIiBzdEV2dDp3aGVuPSIyMDI2LTA2LTIxVDEzOjQwOjI3LTAzOjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgMjYuOSAoV2luZG93cykiLz4gPHJkZjpsaSBzdEV2dDphY3Rpb249InNhdmVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOjc1ZDVkMTkzLWVhZjgtY2Q0NC04YWY4LTNiZWRkMTU4MzhiYyIgc3RFdnQ6d2hlbj0iMjAyNi0wNi0yMVQxMzo0MDoyNy0wMzowMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIDI2LjkgKFdpbmRvd3MpIiBzdEV2dDpjaGFuZ2VkPSIvIi8+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJzYXZlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDo2YWJmMzhhNS03OGM5LWJjNDQtODI1OC1lYTM3NzhkMjgxNDAiIHN0RXZ0OndoZW49IjIwMjYtMDYtMjFUMTQ6MzI6NTEtMDM6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyNi45IChXaW5kb3dzKSIgc3RFdnQ6Y2hhbmdlZD0iLyIvPiA8L3JkZjpTZXE+IDwveG1wTU06SGlzdG9yeT4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4U9kYLAAABxUlEQVRIia1VPUsDQRB9I+ls7C7JKWgnCIkiJwF7URQsba/wX1j6M1S8NpUKCmJlI0oONPYWgknu/BXP4rJ7H9nVNfrg2LnZ2fd2Z29uhCQURCR/+QNIirJrRfKi2F8w5hItICJMEiI6fbIuGrynAID5xfqEr+pPEmqRmtr5/f0A23sd1PM4K+LXTwDASrAEAAjanp5LU+D2+glkJlIrLnQl39rcKvnuHu60SJVjRhnvbwNncn/B189PmPkxwkCuMPwYIupGpRQB5btxFgjaHqJuhOHHUJP7Cz7CgxBXNy/WdTWTU11iFc35JqJuhPAg1KMSKd5DFSTJ85NHKvT6KbFOYj2zCZBAZpO8vH7W49xsiyvLO5ybben546MLjouKzikqYn93TY/FtJlgTBEA9M7yNMX91BamRQAYU2QVCJrZBx2PUmy0M7v3ahZSJ1IoVvVUKfoNrCeIR/lubTt3gfUEwaqHYNWbsF0wVaFNi1KK0jT/WcX94ldkLjxXkCSTpFxs0yJJyoUm6r+tupmp6YSHnQnfd81pe6+DRkNAUkQR/3PL1H1Z6ND0TcIiYojU8ZNNvzphE1XEplgT5Lu0mE7kSqzwBdndWTSlvK72AAAAAElFTkSuQmCC") center/contain no-repeat;
+  image-rendering:pixelated;
+}
+.brand b{font-weight:700;letter-spacing:.2px;font-size:13.5px}
+.brand span{color:var(--header-dim);font-size:10.5px;letter-spacing:.5px;text-transform:uppercase}
+.canvas-sig{position:absolute;left:16px;bottom:14px;z-index:4;font-size:11px;font-style:italic;letter-spacing:.3px;color:var(--blue-d);opacity:.65;pointer-events:none;user-select:none}
+header .btn.ghost{color:var(--header-txt);border-color:#ffffff55}
+header .btn.ghost:hover{background:#ffffff22}
+
+.tbar{display:flex;align-items:center;gap:5px}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;color:var(--txt);
+  background:var(--panel2);border:1px solid var(--line2);
+  padding:6px 11px;border-radius:var(--radius);font-size:12px;font-weight:500;
+  transition:.12s;white-space:nowrap;
+}
+.btn:hover{background:var(--btn-hover-bg);border-color:var(--btn-hover-bd)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.gold{background:var(--gold);color:var(--gold-txt);border-color:var(--gold-d);font-weight:600}
+.btn.gold:hover{background:var(--gold-h)}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.ghost:hover{background:var(--ghost-hover)}
+.btn .ic{font-size:13px;line-height:1}
+.sep{width:1px;height:22px;background:var(--line);margin:0 3px}
+.spacer{flex:1}
+
+/* gender/baked toggle */
+.toggle{display:inline-flex;background:var(--bg2);border:1px solid var(--line2);border-radius:var(--radius);padding:2px}
+.toggle button{
+  background:transparent;border:0;padding:5px 13px;border-radius:5px;font-size:11.5px;font-weight:600;color:var(--dim)
+}
+.toggle button.on{background:var(--gold);color:var(--gold-txt)}
+.toggle.pinkmode button.on{background:var(--pink);color:#fff}
+.fname{font-family:var(--mono);font-size:11px;color:var(--header-dim);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* main split */
+main{display:flex;flex:1;min-height:0}
+.mountdock{width:138px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column}
+.mountdock.hidden{display:none}
+.mdock-head{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--line)}
+.mdock-head button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 2px}
+.mdock-head button:hover{color:var(--gold)}
+#mdockBody{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:10px}
+.mdock-item{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:7px 5px}
+.mdock-cv{image-rendering:pixelated;max-width:100%;border-radius:3px}
+.mdock-lbl{font-size:10px;color:var(--muted);text-align:center;word-break:break-all;line-height:1.25}
+.mdock-foot{padding:7px 9px;border-top:1px solid var(--line)}
+.mdock-reopen{position:absolute;left:8px;top:64px;z-index:40;width:34px;height:34px;border-radius:8px;border:1px solid var(--line2);background:var(--panel);color:var(--gold);cursor:pointer;font-size:16px;box-shadow:0 3px 12px #0006}
+.mdock-reopen.hidden{display:none}
+.mdock-reopen:hover{border-color:var(--gold)}
+.stage{display:flex;flex-direction:column;flex:1;min-width:0;background:var(--bg)}
+.aside{width:516px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column}
+
+/* frame strip */
+.strip-wrap{flex-shrink:0;border-bottom:1px solid var(--line);background:var(--bg2)}
+.strip{display:flex;gap:4px;padding:8px;overflow-x:auto;overflow-y:hidden}
+.strip::-webkit-scrollbar{height:9px}
+.strip::-webkit-scrollbar-thumb{background:var(--line2);border-radius:5px}
+.strip::-webkit-scrollbar-track{background:#0003}
+.thumb{
+  flex-shrink:0;width:54px;height:74px;background:
+    repeating-conic-gradient(var(--check1) 0% 25%,var(--check2) 0% 50%) 0 0/12px 12px;
+  border:1px solid var(--line);border-radius:5px;position:relative;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;overflow:hidden
+}
+.thumb canvas{image-rendering:pixelated;max-width:100%;max-height:100%}
+.thumb.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.thumb .n{position:absolute;bottom:1px;right:2px;font-size:8px;color:#cbd2df;background:#000a;padding:0 3px;border-radius:3px}
+
+/* canvas area */
+.canvas-area{flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:0;
+  background:
+    repeating-conic-gradient(var(--check1s) 0% 25%,var(--check2s) 0% 50%) 0 0/22px 22px}
+#view{image-rendering:pixelated;cursor:crosshair}
+.hud{position:absolute;left:12px;bottom:10px;display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:11px;color:var(--dim);pointer-events:none}
+.hud .chip{background:#0008;border:1px solid var(--line);padding:3px 8px;border-radius:5px;display:flex;align-items:center;gap:6px}
+.hud .sw{width:12px;height:12px;border-radius:3px;border:1px solid #fff3}
+.zoombar{position:absolute;right:12px;bottom:10px;display:flex;gap:4px;align-items:center}
+.playbar{position:absolute;left:50%;transform:translateX(-50%);bottom:10px;display:flex;gap:4px;align-items:center;background:#0009;border:1px solid var(--line);border-radius:7px;padding:4px 6px}
+.iconbtn{width:28px;height:26px;display:inline-flex;align-items:center;justify-content:center;background:var(--panel2);border:1px solid var(--line2);border-radius:5px;font-size:12px}
+.iconbtn:hover{background:#2f3645}
+
+.empty{color:var(--faint);text-align:center;font-size:13px;line-height:1.7}
+.empty b{color:var(--dim);display:block;font-size:14px;margin-bottom:6px}
+
+/* aside tabs */
+.tabs{display:flex;border-bottom:1px solid var(--line);background:var(--bg2);flex-shrink:0;overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.tabs::-webkit-scrollbar{height:4px}
+.tabs::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
+.tabs::-webkit-scrollbar-track{background:transparent}
+.tabs button{flex:1;background:transparent;border:0;border-bottom:2px solid transparent;padding:10px 3px;font-size:11px;font-weight:600;color:var(--dim);white-space:nowrap}
+.tabs button.on{color:var(--gold);border-bottom-color:var(--gold)}
+.tabs button:hover{color:var(--txt)}
+.pane{flex:1;overflow-y:auto;padding:14px}
+.pane::-webkit-scrollbar{width:10px}
+.pane::-webkit-scrollbar-thumb{background:var(--line2);border-radius:5px}
+.pane::-webkit-scrollbar-track{background:transparent}
+
+h4{font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;color:var(--faint);margin:18px 0 9px;font-weight:700}
+h4:first-child{margin-top:0}
+.note{font-size:11px;color:var(--faint);line-height:1.5;margin-top:6px}
+.note.pinkn{color:var(--pink-soft)}
+
+/* palette grid */
+.pgrid{display:grid;grid-template-columns:repeat(16,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.sw{position:relative;aspect-ratio:1;cursor:pointer;outline-offset:-1px}
+.sw::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 0 var(--gold);transition:.05s}
+.sw.sel::after{box-shadow:inset 0 0 0 2px var(--gold)}
+.sw.hov::after{box-shadow:inset 0 0 0 2px #fff}
+.sw::before{content:"";position:absolute;inset:0;pointer-events:none}
+.sw.locked::before,.sw.unused::before{background:repeating-linear-gradient(45deg,#0000 0 3px,#0007 3px 5px)}
+.mountlist{display:flex;flex-direction:column;gap:8px}
+.mountrow{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius);padding:8px}
+.mountthumb{flex:0 0 auto;background:repeating-conic-gradient(var(--check1) 0% 25%,var(--check2) 0% 50%) 0 0/12px 12px;border:1px solid var(--line);border-radius:5px;image-rendering:pixelated;max-width:108px;max-height:108px}
+.mountinfo{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.mountinfo b{font-size:12.5px;word-break:break-all}
+.mountinfo span{font-size:10.5px;color:var(--dim)}
+.xbtn{flex:0 0 auto;padding:4px 9px}
+.mountwrap{display:flex;flex-direction:column;gap:0}
+.mareasbtn{align-self:flex-start;margin-top:4px;font-size:10.5px;padding:4px 9px}
+.mnamesbtn{align-self:flex-start;margin-top:4px;font-size:10.5px;padding:4px 9px}
+.mnamerow{display:flex;align-items:center;gap:7px;margin:4px 0}
+.mnametag{font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--dim);min-width:48px}
+.mnameinput{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line2);border-radius:6px;padding:5px 8px;color:var(--txt);font-size:12px}
+.mnameinput:focus{outline:none;border-color:var(--gold)}
+.adjustbox{display:flex;flex-direction:column;gap:8px;background:var(--panel);border:1px solid var(--line2);border-radius:8px;padding:10px 12px;margin:2px 0 8px}
+.adjrow{display:flex;align-items:center;gap:10px}
+.adjrow label{flex:0 0 74px;font-size:11.5px;color:var(--dim)}
+.adjrow input[type=range]{flex:1;accent-color:var(--gold)}
+.adjval{flex:0 0 42px;text-align:right;font-size:11px;color:var(--txt);font-variant-numeric:tabular-nums}
+.mountareas{display:flex;flex-wrap:wrap;gap:6px;padding:9px;margin-top:-1px;background:var(--panel2);border:1px solid var(--line);border-top:0;border-radius:0 0 var(--radius) var(--radius)}
+.machip{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line2);border-radius:20px;padding:3px 9px 3px 3px;font-size:11px;color:var(--txt);transition:.12s}
+.machip:hover{border-color:var(--gold)}
+.machip.locked{border-color:var(--lock);background:color-mix(in srgb,var(--lock) 12%,var(--panel))}
+.maswatch{width:16px;height:16px;border-radius:50%;border:1px solid #0004;flex:0 0 auto}
+.malabel{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.malock{font-size:9px}
+.machip.clk{cursor:pointer}
+.machip.riderarea{opacity:.6;border-style:dashed}
+.maclass{margin-left:4px;font-size:9px;line-height:1;padding:2px 7px;border-radius:9px;border:1px solid var(--line2);background:transparent;cursor:pointer;white-space:nowrap;transition:.12s}
+.maclass.beast{color:var(--gold);border-color:color-mix(in srgb,var(--gold) 55%,transparent)}
+.maclass.rider{color:var(--muted)}
+.maclass:hover{border-color:var(--gold);color:var(--gold)}
+.cosrow{display:flex;align-items:center;gap:7px;cursor:pointer}
+.cosrow input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:pointer}
+.cossuf{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.cossuf input{width:46px;padding:3px 6px;text-align:center}
+.mono{font-family:var(--mono)}
+.mxall{margin-left:6px;font-size:9px;line-height:1;padding:3px 7px;border-radius:7px;border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;transition:.12s}
+.mxall:hover{border-color:var(--lock);color:var(--lock)}
+.mxall.on{border-color:var(--lock);color:var(--lock);background:color-mix(in srgb,var(--lock) 15%,transparent)}
+.mtag{display:inline-block;font-size:9px;font-weight:600;padding:1px 5px;border-radius:9px;vertical-align:middle;margin-right:3px}
+.mtag.trad{background:color-mix(in srgb,var(--gold) 22%,var(--panel));color:var(--gold)}
+.mtag.halter{background:color-mix(in srgb,var(--blue) 20%,var(--panel));color:var(--blue)}
+.mwarn{font-size:11px;color:var(--lock);font-weight:600}
+.mok{font-size:11px;color:var(--good)}
+.sw .lk{position:absolute;top:1px;right:1px;font-size:7px;color:var(--lock);text-shadow:0 0 2px #000}
+.sw.flash{animation:fl .5s ease}
+@keyframes fl{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 2px #fff inset}}
+
+.editor{margin-top:12px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:11px}
+.editor .top{display:flex;gap:10px;align-items:center}
+.bigsw{width:46px;height:46px;border-radius:6px;border:1px solid var(--line2);flex-shrink:0;padding:0;cursor:pointer;background:none;-webkit-appearance:none;appearance:none}
+.bigsw::-webkit-color-swatch-wrapper{padding:0}
+.bigsw::-webkit-color-swatch{border:none;border-radius:5px}
+.bigsw::-moz-color-swatch{border:none;border-radius:5px}
+.hexrow{flex:1}
+.hexrow input{width:100%;background:var(--bg);border:1px solid var(--line2);color:var(--txt);font-family:var(--mono);font-size:13px;padding:7px 9px;border-radius:5px;text-transform:uppercase}
+.hexrow .meta{font-size:10.5px;color:var(--faint);margin-top:4px;font-family:var(--mono)}
+
+.slider{display:flex;align-items:center;gap:9px;margin:9px 0}
+.slider label{width:18px;font-size:11px;color:var(--dim);font-weight:600}
+.slider .wide{width:30px}
+.slider input[type=range]{flex:1;-webkit-appearance:none;height:4px;background:var(--line2);border-radius:3px;outline:none}
+.slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid #1a1d25}
+.slider input[type=range].rch::-webkit-slider-thumb{background:#ff6b6b}
+.slider input[type=range].gch::-webkit-slider-thumb{background:#6bff8e}
+.slider input[type=range].bch::-webkit-slider-thumb{background:#6b9dff}
+.slider .val{width:38px;text-align:right;font-family:var(--mono);font-size:11px;color:var(--dim)}
+
+.field{margin:10px 0}
+.field label{display:block;font-size:11px;color:var(--dim);margin-bottom:5px;font-weight:600}
+.field select,.field input[type=text],.field input[type=number]{
+  width:100%;background:var(--bg);border:1px solid var(--line2);color:var(--txt);
+  padding:7px 9px;border-radius:5px;font-size:12px}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.check{display:flex;align-items:center;gap:8px;margin:9px 0;cursor:pointer;font-size:12px;color:var(--dim)}
+.check input{width:15px;height:15px;accent-color:var(--gold)}
+
+/* areas list */
+.area{display:flex;align-items:center;gap:9px;padding:8px;border:1px solid var(--line);border-radius:6px;margin-bottom:7px;background:var(--panel2);cursor:pointer;transition:.1s}
+.area:hover{border-color:var(--line2)}
+.area.sel{border-color:var(--gold);background:#2a2415}
+.area .ramp{display:flex;height:20px;border-radius:4px;overflow:hidden;flex:1;border:1px solid #0005}
+.area .ramp i{flex:1}
+.area .anm{font-size:11px;font-weight:600;width:62px;flex-shrink:0;text-transform:capitalize}
+.area .cnt{font-size:10px;color:var(--faint);width:34px;text-align:right;flex-shrink:0;font-family:var(--mono)}
+.curated{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:188px;overflow-y:auto;padding:2px;margin-top:2px;scrollbar-width:thin}
+.cchip{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden;cursor:pointer;background:var(--panel2);transition:.1s}
+.cchip .cdel{position:absolute;top:2px;right:3px;font-size:10px;color:#fff;background:rgba(0,0,0,.5);border-radius:3px;padding:0 4px;cursor:pointer;line-height:1.5;opacity:0;transition:.1s}
+.cchip:hover .cdel{opacity:1}
+.cchip .cdel:hover{background:#e66}
+.cchip:hover{border-color:var(--line2)}
+.cchip.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.cchip.none{grid-column:span 2;text-align:center;padding:6px;font-size:11px;font-weight:600;color:var(--dim)}
+.cchip.none.on{color:var(--gold);border-color:var(--gold)}
+.cchip .cbar{display:flex;height:20px}
+.cchip .cbar i{flex:1}
+.cchip .cname{display:block;padding:3px 6px;font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.paltools{display:flex;gap:4px;margin:0 0 9px}
+.paltools button{flex:1;padding:6px 4px;font-size:11px;font-weight:600;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:5px;cursor:pointer;transition:.1s}
+.paltools button:hover{color:var(--txt);border-color:var(--line2)}
+.paltools button.on{color:var(--gold-txt);background:var(--gold);border-color:var(--gold)}
+.area .alk{width:22px;text-align:center;flex-shrink:0;font-size:12px;color:var(--faint);cursor:pointer;opacity:0;transition:opacity .12s}
+.area:hover .alk{opacity:.32}
+.area .alk.on{opacity:1}
+.schemelib{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px;max-height:300px;overflow-y:auto;padding-right:2px}
+.macrosets{display:flex;flex-direction:column;gap:5px}
+.msetrow{display:flex;align-items:center;gap:8px;padding:6px 9px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);font-size:12px}
+.msetrow .mname{font-weight:600;color:var(--gold)}
+.msetrow .mcnt{color:var(--muted);margin-left:auto}
+.msetrow .mdel{cursor:pointer;color:var(--muted);padding:0 4px}.msetrow .mdel:hover{color:#e66}
+.macrotable{border:1px solid var(--line2);border-radius:8px;overflow:hidden;font-size:12px}
+.mrow{display:grid;grid-template-columns:24px 1.3fr 44px 44px 44px 1.4fr 46px;gap:5px;align-items:center;padding:5px 7px;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:none}
+.mrow.mhead{background:var(--panel);font-weight:600;color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
+.mrow input[type=number]{width:100%;padding:3px 4px;font-size:11px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--txt)}
+.mrow select{width:100%;padding:3px 2px;font-size:11px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--txt)}
+.mareas{cursor:pointer;padding:3px 7px;border-radius:4px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);font-size:10.5px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mareas.on,.mareas:hover{border-color:var(--gold);color:var(--gold)}
+.mexpand{background:var(--panel);border-bottom:1px solid var(--line);padding:8px 10px}
+.mxhead{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600;margin:8px 0 4px}.mxhead:first-child{margin-top:0}
+.mxarea{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:4px;border-bottom:1px solid var(--line)}
+.mxarea.alt{background:color-mix(in srgb,var(--txt) 3%,transparent)}
+.mxarea:hover{background:color-mix(in srgb,var(--gold) 9%,transparent)}
+.mxname{flex:1;font-size:12px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mxname.mxflash{cursor:pointer}.mxname.mxflash:hover{color:var(--gold);text-decoration:underline}
+.segrp{display:flex;gap:2px;flex-shrink:0}
+.seg{cursor:pointer;padding:2px 7px;font-size:10.5px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:4px}
+.seg:hover{border-color:var(--gold)}
+.seg.on{background:color-mix(in srgb,var(--gold) 20%,var(--panel2));border-color:var(--gold);color:var(--gold);font-weight:600}
+.mrow .mx{cursor:pointer;color:var(--muted);text-align:center}.mrow .mx:hover{color:#e66}
+.mrowx{display:flex;gap:6px;justify-content:center;align-items:center}
+.mdup{cursor:pointer;color:var(--muted);font-size:13px}.mdup:hover{color:var(--gold)}
+.mrow .midx{color:var(--muted);text-align:center}
+.mbreak{margin-top:8px;max-height:200px;overflow-y:auto;border:1px solid var(--line);border-radius:6px;background:var(--panel2)}
+.mbrow{padding:3px 8px;border-bottom:1px solid var(--line);font-size:11px;line-height:1.5}
+.mgroup{border:1px solid var(--line2);border-radius:9px;padding:10px;margin-bottom:10px;background:var(--panel2)}
+.mghead{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.mgname{flex:1;font-size:13px;font-weight:600;color:var(--gold);background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:4px 8px}
+.mgsets{font-size:11px;margin-bottom:8px}
+.mchkrow{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:5px}
+.mchk{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;cursor:pointer}
+.mmasters{display:flex;flex-direction:column;gap:8px}
+.mmaster{border:1px solid var(--line);border-radius:7px;padding:8px;background:var(--panel)}
+.mmrow{display:flex;gap:7px;align-items:center}
+.mmname{flex:1;min-width:0;font-size:12px;font-weight:600;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:3px 7px;color:var(--txt)}
+.mmsbc{display:flex;align-items:center;gap:3px;font-size:10.5px;color:var(--muted)}
+.mmsbc input{width:38px;padding:3px 3px;font-size:11px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--txt)}
+.mapply{margin:7px 0 6px;font-size:11px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.mchip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border:1px solid var(--line);border-radius:11px;cursor:pointer;font-size:11px;color:var(--muted)}
+.mchip.on{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.mchip input{display:none}
+.mgaddm{justify-content:center;width:100%;margin-top:8px;font-size:11.5px}
+.mbrow:last-child{border-bottom:none}
+.schip{position:relative;display:flex;align-items:center;gap:7px;padding:6px 7px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);cursor:pointer;transition:.1s}
+.schip:hover{border-color:var(--gold)}
+.schip.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;background:color-mix(in srgb,var(--gold) 10%,var(--panel2))}
+.schip .supd{position:absolute;top:-6px;right:14px;width:18px;height:18px;border-radius:50%;background:var(--panel);border:1px solid var(--line2);color:var(--gold);font-size:10px;line-height:1;cursor:pointer;display:none;align-items:center;justify-content:center}
+.schip:hover .supd,.schip.active .supd{display:flex}
+.schip .supd:hover{background:var(--gold);color:var(--gold-txt);border-color:var(--gold)}
+.schip .snum{font-size:10px;font-family:var(--mono);color:var(--faint);flex-shrink:0;width:28px}
+.schip .sbar{display:flex;height:18px;flex:1;border-radius:4px;overflow:hidden;border:1px solid #0005}
+.schip .sbar i{flex:1}
+.schip .srm{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--panel);border:1px solid var(--line2);color:var(--faint);font-size:9px;line-height:1;cursor:pointer;display:none}
+.schip:hover .srm{display:block}
+.schip .srm:hover{color:#ff6b6b;border-color:#ff6b6b}
+.area .alk.on{color:var(--lock)}
+
+.swatch-pick{width:36px;height:30px;border-radius:5px;border:1px solid var(--line2);cursor:pointer;flex-shrink:0;padding:0;background:#3a7bd5}
+.swatch-pick:hover{border-color:var(--gold)}
+.cpop{position:absolute;z-index:1000;background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:11px;box-shadow:0 10px 32px #000a;width:236px}
+.cp-top{display:flex;gap:9px}
+.cp-sv{position:relative;width:188px;height:140px;border-radius:5px;cursor:crosshair;touch-action:none;border:1px solid var(--line2)}
+.cp-cur{position:absolute;width:12px;height:12px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 1px #000a;pointer-events:none}
+.cp-hue{position:relative;width:18px;height:140px;border-radius:5px;cursor:ns-resize;touch-action:none;border:1px solid var(--line2);background:linear-gradient(to bottom,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)}
+.cp-hc{position:absolute;left:-3px;right:-3px;height:4px;border:2px solid #fff;border-radius:3px;transform:translateY(-50%);box-shadow:0 0 0 1px #000a;pointer-events:none}
+.cp-row{display:flex;align-items:center;gap:8px;margin-top:9px}
+.cp-prev{width:30px;height:24px;border-radius:4px;border:1px solid var(--line2);flex-shrink:0}
+.cp-hex{flex:1;padding:4px 6px;font-size:12px;font-family:monospace;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--txt);text-transform:uppercase}
+.cp-grid{display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr;gap:5px 6px;margin-top:9px;align-items:center}
+.cp-grid label{font-size:11px;color:var(--muted);font-weight:600}
+.cp-grid input{width:100%;padding:3px 4px;font-size:11px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--txt)}
+.inline-color{display:flex;gap:8px;align-items:center}
+
+/* generate scheme preview */
+.scheme-prev{display:flex;height:26px;border-radius:5px;overflow:hidden;border:1px solid var(--line);margin:8px 0}
+.scheme-prev i{flex:1}
+
+.btnrow{display:flex;gap:7px;margin-top:12px}
+.btnrow .btn{flex:1;justify-content:center}
+
+/* remap */
+.maprow{display:grid;grid-template-columns:30px 1fr 14px 1fr;gap:6px;align-items:center;padding:4px;border-radius:4px;font-size:10px;font-family:var(--mono)}
+.maprow:hover{background:#ffffff08}
+.maprow .ix{color:var(--faint);text-align:right}
+.mapsw{height:16px;border-radius:3px;border:1px solid #0006;display:flex;align-items:center;justify-content:center;font-size:8px;color:#000a}
+.maparrow{text-align:center;color:var(--faint)}
+
+/* info */
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:12px}
+.kv span{color:var(--dim)}
+.kv b{font-family:var(--mono);font-weight:500}
+
+/* toast */
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--panel2);border:1px solid var(--line2);padding:10px 16px;border-radius:8px;
+  font-size:12.5px;opacity:0;transition:.25s;pointer-events:none;z-index:50;box-shadow:0 8px 30px #000a}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:var(--lock);color:var(--lock)}
+#toast.ok{border-color:var(--good);color:var(--good)}
+
+.pill{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:10px;background:var(--line2);color:var(--dim);font-weight:600;margin-left:6px}
+.pill.pink{background:var(--pink);color:#fff}
+.tiny{font-size:10px;color:var(--faint)}
+kbd{font-family:var(--mono);font-size:10px;background:var(--bg);border:1px solid var(--line2);border-bottom-width:2px;padding:1px 5px;border-radius:4px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="mark"></div>
+      <div>
+        <b>Palette Forge</b>
+        <span>RO sprite palette studio</span>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <div class="tbar">
+      <button class="btn" id="openSpr"><span class="ic">🗁</span> Open SPR</button>
+      <button class="btn" id="openPal"><span class="ic">🎨</span> Open PAL</button>
+      <div class="sep"></div>
+      <button class="btn gold" id="savePal" disabled><span class="ic">💾</span> Save PAL</button>
+      <button class="btn ghost" id="resetPal" disabled title="Restore baked-in palette"><span class="ic">↺</span> Reset</button>
+    </div>
+    <div class="spacer" style="flex:1"></div>
+    <span class="fname" id="fname">no sprite loaded</span>
+    <div class="sep"></div>
+    <div class="toggle" id="srcToggle">
+      <button data-src="baked" class="on">Baked-in</button>
+      <button data-src="custom">Custom</button>
+    </div>
+    <div class="sep"></div>
+    <button class="btn ghost" id="themeBtn" title="Toggle light / dark theme"><span class="ic" id="themeIc">🌙</span></button>
+  </header>
+
+  <main>
+    <button id="mdockReopen" class="mdock-reopen hidden" title="Show mount preview">🐎</button>
+    <aside id="mountDock" class="mountdock hidden">
+      <div class="mdock-head"><span>Mounts</span><button id="mdockClose" title="Hide">✕</button></div>
+      <div id="mdockBody"></div>
+      <div class="mdock-foot tiny dim">Click a mount area in the Macro to flash it here.</div>
+    </aside>
+    <section class="stage">
+      <div class="strip-wrap"><div class="strip" id="strip"></div></div>
+      <div class="canvas-area" id="canvasArea">
+        <div class="empty" id="emptyMsg">
+          <b>Drop a .spr here, or Open SPR</b>
+          The embedded (baked-in) palette loads as your source of truth.<br>
+          Magenta <span style="color:var(--pink)">FF00FF</span> slots are reserved — never recolored.
+        </div>
+        <canvas id="view" class="hidden"></canvas>
+        <div class="hud" id="hud"></div>
+        <div class="playbar hidden" id="playbar">
+          <button class="iconbtn" id="playBtn">▶</button>
+          <input type="range" id="fps" min="1" max="24" value="8" style="width:80px">
+          <span class="tiny" id="fpsLbl" style="width:46px">8 fps</span>
+        </div>
+        <div class="zoombar">
+          <button class="iconbtn" id="zoomOut">−</button>
+          <button class="iconbtn" id="zoomIn">+</button>
+        </div>
+        <div class="canvas-sig">by Sanngridr</div>
+      </div>
+    </section>
+
+    <aside class="aside">
+      <div class="tabs" id="tabs">
+        <button data-tab="palette" class="on">Palette</button>
+        <button data-tab="areas">Areas</button>
+        <button data-tab="adjust">Adjust</button>
+        <button data-tab="generate">Generate</button>
+        <button data-tab="remap">Remap</button>
+        <button data-tab="mount">Mount</button>
+        <button data-tab="schemes">Schemes</button>
+        <button data-tab="macro">Macro</button>
+        <button data-tab="export">Export</button>
+        <button data-tab="info">Info</button>
+      </div>
+
+      <!-- PALETTE -->
+      <div class="pane" data-pane="palette">
+        <h4>Colors <span class="tiny" id="palCount">(256)</span></h4>
+        <div class="paltools" id="palTools">
+          <button data-mode="pick" class="on" title="Select single colors">Pick</button>
+          <button data-mode="area" title="Click a color to select its whole area">Area</button>
+          <button data-mode="lock" title="Click a color to lock/unlock its whole area">Lock</button>
+        </div>
+        <div class="pgrid" id="pgrid"></div>
+        <div class="note">Modes above, or hold <kbd>Shift</kbd>+click to multi-select · <kbd>Alt</kbd>+click to lock one color</div>
+
+        <div class="editor">
+          <h4 style="margin-top:0">Edit selected color</h4>
+          <div class="top">
+            <input type="color" class="bigsw" id="bigSw" value="#000000" title="Open color picker">
+            <div class="hexrow">
+              <input id="hexIn" placeholder="#rrggbb" maxlength="7">
+              <div class="meta" id="selMeta">select a swatch</div>
+            </div>
+          </div>
+          <div class="slider"><label>R</label><input type="range" class="rch" id="rIn" min="0" max="255" value="0"><span class="val" id="rVal">0</span></div>
+          <div class="slider"><label>G</label><input type="range" class="gch" id="gIn" min="0" max="255" value="0"><span class="val" id="gVal">0</span></div>
+          <div class="slider"><label>B</label><input type="range" class="bch" id="bIn" min="0" max="255" value="0"><span class="val" id="bVal">0</span></div>
+        </div>
+      </div>
+
+      <!-- AREAS -->
+      <div class="pane hidden" data-pane="areas">
+        <h4>Detected areas</h4>
+        <div class="note" style="margin-bottom:10px">Areas group used colors by hue + tone, so you can recolor a whole region (hair, cloth, metal…) while keeping its shading.</div>
+        <div class="row" style="margin-bottom:10px">
+          <button class="btn ghost" id="detectAreas">Auto-detect</button>
+          <select id="areaGran" class="field" style="margin:0"><option value="loose">Loose groups</option><option value="med" selected>Balanced</option><option value="fine">Fine groups</option></select>
+        </div>
+        <div id="areaList"></div>
+
+        <h4>Recolor selected area</h4>
+        <div class="inline-color">
+          <button type="button" class="swatch-pick" id="areaColorSw" title="Pick colour"></button><input type="hidden" id="areaColor" value="#cc5533">
+          <button class="btn gold" id="applyAreaColor" style="flex:1;justify-content:center">Recolor (keep shading)</button>
+        </div>
+        <div class="note">Replaces the area's hue/saturation with the picked color but preserves each index's original brightness — so highlights and shadows stay intact.</div>
+        <h4>Tune selected area <span class="note" style="font-weight:400">(live, this area only)</span></h4>
+        <div class="adjustbox">
+          <div class="adjrow"><label>Saturation</label><input type="range" id="areaSat" min="-100" max="100" step="1" value="0"><span class="adjval" id="areaSatV">0%</span></div>
+          <div class="adjrow"><label>Brightness</label><input type="range" id="areaBri" min="-100" max="100" step="1" value="0"><span class="adjval" id="areaBriV">0%</span></div>
+          <div class="adjrow"><label>Contrast</label><input type="range" id="areaCon" min="-100" max="100" step="1" value="0"><span class="adjval" id="areaConV">0%</span></div>
+        </div>
+        <div class="note dim">Affects only the selected area and keeps its shading ramp. Pull <b>Saturation</b> to −100% for a neutral black→grey→white ramp — that's how you mix greys/whites/blacks alongside coloured areas. Changes bake in as you drag; selecting another area starts fresh.</div>
+        <div class="btnrow">
+          <button class="btn ghost" id="lockArea">Lock area</button>
+          <button class="btn ghost" id="selectAreaPix">Select on sprite</button>
+        </div>
+      </div>
+
+      <!-- ADJUST -->
+      <div class="pane hidden" data-pane="adjust">
+        <h4>Tone adjust <span class="pill" id="adjScope">whole palette</span></h4>
+        <div class="note" style="margin-bottom:12px">Operates on your current selection or area; with nothing selected it affects all unlocked, used colors. Locked & magenta slots are never touched.</div>
+        <div class="slider"><label class="wide">Hue</label><input type="range" id="aHue" min="-180" max="180" value="0"><span class="val" id="aHueV">0</span></div>
+        <div class="slider"><label class="wide">Sat</label><input type="range" id="aSat" min="-100" max="100" value="0"><span class="val" id="aSatV">0</span></div>
+        <div class="slider"><label class="wide">Bri</label><input type="range" id="aBri" min="-100" max="100" value="0"><span class="val" id="aBriV">0</span></div>
+        <div class="slider"><label class="wide">Con</label><input type="range" id="aCon" min="-100" max="100" value="0"><span class="val" id="aConV">0</span></div>
+        <div class="btnrow">
+          <button class="btn ghost" id="adjReset">Reset sliders</button>
+          <button class="btn gold" id="adjApply">Bake in</button>
+        </div>
+        <div class="note">Drag to preview live. <b>Bake in</b> commits the change; sliders reset and you can adjust again.</div>
+      </div>
+
+      <!-- GENERATE -->
+      <div class="pane hidden" data-pane="generate">
+        <h4>Generate palette</h4>
+        <div class="field">
+          <label>Color scheme</label>
+          <select id="genScheme">
+            <option value="mono">Monochromatic</option>
+            <option value="analogous">Analogous</option>
+            <option value="complementary">Complementary</option>
+            <option value="split">Split-complementary</option>
+            <option value="triadic" selected>Triadic</option>
+            <option value="tetradic">Tetradic</option>
+            <option value="random">Random per area</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Base color</label>
+          <div class="inline-color">
+            <button type="button" class="swatch-pick" id="genBaseSw" title="Pick base colour"></button><input type="hidden" id="genBase" value="#3a7bd5">
+            <label class="check" style="margin:0"><input type="checkbox" id="genRandomBase"> Randomize base each roll</label>
+          </div>
+        </div>
+        <div class="scheme-prev" id="schemePrev"></div>
+        <div class="field">
+          <label>Curated palette <span class="tiny">(overrides the scheme above when picked)</span></label>
+          <div class="curated" id="curatedLib"></div>
+          <div class="row" style="margin-top:6px">
+            <input type="text" id="chUrl" class="field" placeholder="Paste a ColorHunt link or hex codes…" style="margin:0;flex:1" spellcheck="false">
+            <button class="btn ghost" id="chAdd" title="Add as a custom palette" style="flex:0 0 auto"><span class="ic">＋</span> Add</button>
+          </div>
+          <div class="tiny dim" style="margin-top:3px">e.g. colorhunt.co/palette/… — colours are read straight from the link (works offline). Custom palettes are saved on this device.</div>
+        </div>
+        <div class="field">
+          <label>Color balance (distribution across areas)</label>
+          <select id="genBalanceMode">
+            <option value="free">Free — one hue per area</option>
+            <option value="60-30-10">60 / 30 / 10 (dominant · secondary · accent)</option>
+            <option value="70-20-10">70 / 20 / 10</option>
+            <option value="50-30-20">50 / 30 / 20</option>
+            <option value="50-50">50 / 50</option>
+          </select>
+        </div>
+        <div class="slider"><label class="wide">Spread</label><input type="range" id="genBalance" min="0" max="100" value="55"><span class="val" id="genBalanceV">55</span></div>
+        <div class="note" style="margin-top:-4px">Spread = hue jitter (high = even, low = clustered). Balance assigns dominant/accent roles by area size.</div>
+        <h4>Modifiers</h4>
+        <div class="slider"><label class="wide">Sat</label><input type="range" id="genSat" min="-100" max="100" value="0"><span class="val" id="genSatV">0</span></div>
+        <div class="slider"><label class="wide">Bri</label><input type="range" id="genBri" min="-100" max="100" value="0"><span class="val" id="genBriV">0</span></div>
+        <div class="slider"><label class="wide">Con</label><input type="range" id="genCon" min="-100" max="100" value="0"><span class="val" id="genConV">0</span></div>
+        <label class="check"><input type="checkbox" id="genRespect" checked> Respect areas (one hue per detected area)</label>
+        <div class="btnrow">
+          <button class="btn ghost" id="genRoll"><span class="ic">🎲</span> Roll preview</button>
+          <button class="btn gold" id="genApply">Apply</button>
+        </div>
+        <div class="note">Preserves each color's original brightness (shading), and always keeps magenta + locked slots.</div>
+      </div>
+
+      <!-- REMAP -->
+      <div class="pane hidden" data-pane="remap">
+        <h4>Baked-in ↔ Custom map</h4>
+        <div class="note" style="margin-bottom:10px">Match the sprite's baked-in palette to a loaded custom palette by color, so indices can be shifted between the two structures. Useful when a working <span style="color:var(--pink-soft)">_0.pal</span> uses a different index order than the sprite.</div>
+        <button class="btn ghost" id="buildMap" style="width:100%;justify-content:center">Build color map</button>
+        <button class="btn" id="lockMap" style="width:100%;justify-content:center;margin-top:6px" disabled>🔒 Lock map</button>
+        <div class="note" id="lockMapNote" style="margin-top:4px">Lock the map, then load your generated custom .pals to preview them on the sprite without rebuilding the map.</div>
+        <div class="row" style="margin-top:8px">
+          <div class="kv" style="border:0;flex:1"><span>Exact</span><b id="mapExact">–</b></div>
+          <div class="kv" style="border:0;flex:1"><span>Nearest</span><b id="mapNear">–</b></div>
+        </div>
+        <div class="field" style="margin-top:4px">
+          <label>Export index structure</label>
+          <select id="mapTarget">
+            <option value="baked">Match baked-in (sprite) order</option>
+            <option value="custom">Match loaded custom order</option>
+          </select>
+        </div>
+        <div id="mapList" style="margin-top:8px;max-height:280px;overflow:auto"></div>
+      </div>
+
+      <!-- MOUNT -->
+      <div class="pane hidden" data-pane="mount">
+        <h3>Mounts</h3>
+        <p class="note">Add a mount's <b>.spr</b> — works for both <b>halter</b> mounts (Lion, Cerberus…) and <b>intrinsic</b> mounts (Dragon, Peco, Gryphon…). Use the <b>original</b> Gravity sprite; re-indexed "corrected" sprites from custom packs change the baked-in layout and won't line up. The rider is detected by <b>index alignment</b> — slots whose baked colour matches the base sprite follow the character's recolour exactly, so the rider stays identical to the unmounted form. Everything else is the mount; theme it with your scheme and lock any areas you want to keep.</p>
+        <button class="btn ghost" id="addMount" style="width:100%;justify-content:center;margin:8px 0"><span class="ic">＋</span> Add mount (.spr)</button>
+        <input type="file" id="mountFile" accept=".spr" multiple style="display:none">
+        <div id="mountList" class="mountlist"></div>
+        <div class="note dim" style="margin-top:10px">Then in <b>Schemes → Bake all</b>, tick <b>Also create mount palettes</b> to export the character and every mount together (one .zip, each palette named for its own sprite + gender + #).</div>
+      </div>
+
+      <!-- EXPORT -->
+      <!-- SCHEMES -->
+      <div class="pane hidden" data-pane="schemes">
+        <h4>Scheme library <span class="note" style="font-weight:400">(<span id="schemeCount">0</span> saved)</span></h4>
+        <div class="note">A scheme stores a colour <b>theme</b> (per-area hues), not exact slots — so it applies to <b>any class</b>. Save the current look, or roll a batch, then click a scheme to apply it to the loaded sprite. After tweaking the palette, <b>Save current</b> adds a new scheme, or click the <b>✎</b> on a scheme to overwrite that one in place.</div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn gold" id="schemeSave" style="flex:1.4;justify-content:center"><span class="ic">＋</span> Save current</button>
+          <div class="field" style="margin:0;flex:.8"><label>Roll #</label><input type="number" id="schemeRollN" value="20" min="1" max="700"></div>
+          <button class="btn" id="schemeRoll" style="flex:1;justify-content:center"><span class="ic">🎲</span> Roll</button>
+        </div>
+        <div class="adjrow" style="margin:8px 2px 0"><label style="flex:0 0 110px">Variation</label><input type="range" id="schemeSpread" min="0" max="100" step="1" value="60"><span class="adjval" id="schemeSpreadV">60%</span></div>
+        <div class="note dim" style="margin:4px 0 0">How far apart rolled schemes are forced to sit on the colour wheel. Higher = more distinct hues, fewer look-alikes (0 = pure random, may repeat). Needs <b>Randomize base each roll</b> on.</div>
+        <div class="adjrow" style="margin:8px 2px 0"><label style="flex:0 0 110px">Tone variety</label><input type="range" id="schemeVariety" min="0" max="100" step="1" value="40"><span class="adjval" id="schemeVarietyV">40%</span></div>
+        <div class="note dim" style="margin:4px 0 0">Spreads saturation &amp; lightness across rolls so you also get muted tones, <b>browns</b> (warm + low saturation), <b>dark greens</b>, and neutral <b>greys/blacks/whites</b> — not only vivid hues. 0 = always vivid.</div>
+        <div id="schemeLib" class="schemelib"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn ghost" id="schemeClear" style="flex:1;justify-content:center">Clear all</button>
+          <button class="btn ghost" id="schemeImport" style="flex:1;justify-content:center">Import .json</button>
+          <button class="btn ghost" id="schemeExportJson" style="flex:1;justify-content:center">Export .json</button>
+          <input type="file" id="schemeImportFile" accept=".json" hidden>
+        </div>
+        <h4>Adjust before export <span class="note" style="font-weight:400">(applies to every scheme)</span></h4>
+        <div class="adjustbox">
+          <div class="adjrow"><label>Saturation</label><input type="range" id="adjSat" min="-100" max="100" step="1" value="0"><span class="adjval" id="adjSatV">0%</span></div>
+          <div class="adjrow"><label>Brightness</label><input type="range" id="adjBri" min="-100" max="100" step="1" value="0"><span class="adjval" id="adjBriV">0%</span></div>
+          <div class="adjrow"><label>Contrast</label><input type="range" id="adjCon" min="-100" max="100" step="1" value="0"><span class="adjval" id="adjConV">0%</span></div>
+          <button class="btn ghost" id="schemeAdjReset" style="justify-content:center;font-size:11px;padding:4px 9px">Reset to neutral</button>
+        </div>
+        <div class="note dim" style="margin:0 0 12px">Tweaks the colours of the currently-applied scheme live, and is baked into every palette on export — so one scheme can produce a vivid set and a muted set without editing the .json. Leave at 0 for the scheme's original look.</div>
+        <h4>Bake all for current class</h4>
+        <div class="row">
+          <div class="field" style="margin:0"><label>Start #</label><input type="number" id="schemeStart" value="0" min="0"></div>
+          <button class="btn gold" id="schemeExportZip" style="align-self:flex-end;height:34px;flex:1.8;justify-content:center"><span class="ic">📦</span> Export all as .zip</button>
+        </div>
+        <label class="chk" style="margin-top:6px"><input type="checkbox" id="schemeMounts"> Also create mount palettes <span class="dim" id="schemeMountsN"></span></label>
+        <div class="note">Applies every saved scheme to the loaded class and writes <b>base + gender + _#</b> palettes (uses the Export tab's structure + base name). e.g. <span style="color:var(--gold)">…_0.pal … _699.pal</span> · With mounts on, each scheme also writes a palette for every sprite added in the <b>Mount</b> tab, keeping clothing identical to the character.</div>
+      </div>
+
+      <!-- MACRO -->
+      <div class="pane hidden" data-pane="macro">
+        <h4>Macro — batch runs</h4>
+        <div class="note">Define the run plan <b>once</b> (scheme set + Sat/Bri/Con). For each run, click the <b>Areas</b> cell to set how each area behaves <i>for that run</i>. One export bakes the full pack (character + every loaded mount). The plan persists; per-area treatments are per-class and reset when you load a new sprite.</div>
+
+        <h4 style="margin-top:14px">Scheme sets</h4>
+        <div id="macroSets" class="macrosets"></div>
+        <div class="row" style="margin-top:8px">
+          <input type="text" id="macroSetName" class="field" placeholder="set name (e.g. Mono)" style="margin:0;flex:1.2">
+          <button class="btn ghost" id="macroSetImport" style="flex:1;justify-content:center">Import set .json</button>
+          <input type="file" id="macroSetFile" accept=".json" hidden>
+        </div>
+        <div class="note dim" style="margin:4px 0 0">Each set is a scheme library (the same .json you export from the Schemes tab). Name it, then import. Runs reference sets by name.</div>
+
+        <h4 style="margin-top:14px">Groups &amp; masters</h4>
+        <div class="note dim" style="margin:0 0 8px">A <b>group</b> picks which scheme sets (colours) it covers and in what order. A <b>master</b> is a reusable Sat/Bri/Con + per-area lock preset, applied to one or more of the group's colours (the "Apply to" checkboxes). On export, every palette of one colour stays together: <b>group → colour → master → scheme</b>. Add more groups to stage blocks (e.g. basics before colourful) while keeping each block's order.</div>
+        <div id="macroGroups"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn ghost" id="macroAddGroup" style="flex:1;justify-content:center"><span class="ic">＋</span> Add group</button>
+          <button class="btn ghost" id="macroUnlockAll" style="flex:1;justify-content:center"><span class="ic">🔓</span> Unlock all</button>
+        </div>
+        <div id="macroLockCount" class="note dim" style="margin-top:6px"></div>
+
+        <h4 style="margin-top:14px">Export full pack</h4>
+        <div class="row">
+          <div class="field" style="margin:0"><label>Start #</label><input type="number" id="macroStart" value="0" min="0"></div>
+          <button class="btn gold" id="macroExport" style="align-self:flex-end;height:34px;flex:1.8;justify-content:center"><span class="ic">📦</span> Export full pack .zip</button>
+        </div>
+        <label class="chk" style="margin-top:6px"><input type="checkbox" id="macroMounts" checked> Include mount palettes <span class="dim" id="macroMountsN"></span></label>
+        <div class="row" style="margin-top:8px">
+          <button class="btn ghost" id="macroImport" style="flex:1;justify-content:center">Import macro .json</button>
+          <button class="btn ghost" id="macroExportJson" style="flex:1;justify-content:center">Export macro .json</button>
+          <input type="file" id="macroImportFile" accept=".json" hidden>
+        </div>
+        <div id="macroSummary" class="note dim" style="margin-top:8px"></div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="pane hidden" data-pane="export">
+        <h4>Filename</h4>
+        <div class="field">
+          <label>Output structure</label>
+          <select id="expStruct">
+            <option value="baked">Sprite / baked layout</option>
+            <option value="custom">Custom .pal layout (in-game) — remapped</option>
+          </select>
+        </div>
+        <div class="note">Load the in-game <b>custom _0.pal</b> (Open ▸ PAL) to enable remapping. For base characters whose sprite layout differs from the server's palette, choose <b>Custom layout</b> so the export drops into the right slots.</div>
+        <div class="field"><label>Class base name (Korean or as-on-disk)</label><input type="text" id="expBase" placeholder="e.g. ¼ºÁ÷ÀÚ"></div>
+        <div class="field"><label>Also export as (aliases) <span class="tiny">comma-separated, optional</span></label><input type="text" id="expAlias" placeholder="alternate GRF names, e.g. ¼ºÁ÷ÀÚ_b, ¼ºÁ÷ÀÚ2" spellcheck="false"></div>
+        <div class="field"><label class="cosrow"><input type="checkbox" id="expCostume"> Costume <span class="tiny">appends an extra body-style suffix after the number (e.g. <span class="mono">_0_1</span>)</span></label><span class="cossuf">suffix _<input type="text" id="expCostumeSuffix" value="1" spellcheck="false"></span></div>
+        <div class="field">
+          <label>Gender suffix</label>
+          <div class="toggle pinkmode" id="genderToggle" style="width:100%">
+            <button data-g="female" class="on" style="flex:1">Female &nbsp;_¿©</button>
+            <button data-g="male" style="flex:1">Male &nbsp;_³²</button>
+          </div>
+        </div>
+        <div class="note" id="namePreview" style="font-family:var(--mono);color:var(--gold)"></div>
+
+        <h4>Single file</h4>
+        <div class="row">
+          <div class="field" style="margin:0"><label>Palette #</label><input type="number" id="expNum" value="0" min="0"></div>
+          <button class="btn gold" id="expSingle" style="align-self:flex-end;height:34px;flex:1.4;justify-content:center">Save .pal</button>
+        </div>
+
+        <h4>Batch (generated variants)</h4>
+        <div class="row">
+          <div class="field" style="margin:0"><label>Start #</label><input type="number" id="batchStart" value="0" min="0"></div>
+          <div class="field" style="margin:0"><label>Count</label><input type="number" id="batchCount" value="10" min="1" max="500"></div>
+        </div>
+        <div class="field">
+          <label>Each variant uses</label>
+          <select id="batchMode">
+            <option value="gen">A fresh generated palette (current Generate settings)</option>
+            <option value="current">A copy of the current palette</option>
+          </select>
+        </div>
+        <div class="slider"><label class="wide">Vary</label><input type="range" id="batchVary" min="0" max="100" value="30"><span class="val" id="batchVaryV">30</span></div>
+        <div class="note" style="margin-top:-4px">How much each generated palette differs within the theme. 0 = identical copies (fill gaps); higher = more variety in hue, saturation, and brightness.</div>
+        <button class="btn gold" id="expBatch" style="width:100%;justify-content:center"><span class="ic">📦</span> Export batch as .zip</button>
+        <div class="note">Names follow <b>base + gender + _#</b>, e.g. <span style="color:var(--gold)">¼ºÁ÷ÀÚ_¿©_0.pal … _9.pal</span></div>
+      </div>
+
+      <!-- INFO -->
+      <div class="pane hidden" data-pane="info">
+        <h4>Sprite</h4>
+        <div id="infoBox"><div class="note">Load a sprite to see details.</div></div>
+      </div>
+    </aside>
+  </main>
+</div>
+<div id="toast"></div>
+
+<!-- file inputs -->
+<input type="file" id="fSpr" accept=".spr" class="hidden">
+<input type="file" id="fPal" accept=".pal" class="hidden">
+
+<script>
+/* ============================================================
+   Palette Forge — RO .spr / .pal / .act palette editor
+   Single-file, offline. No dependencies.
+
+     ██  Crafted by Sanngridr  ██
+     A passion project for RagnaRocha and the rAthena community.
+     If you build on this, a nod to Sanngridr is appreciated. ♦
+
+   ============================================================ */
+"use strict";
+
+/* ---------- global state ---------- */
+const S = {
+  spr: null,            // { ver, frames:[{w,h,pix:Uint8Array}], rgbaFrames:[], bakedPal:Uint8Array(1024) }
+  act: null,
+  bakedPal: null,       // Uint8Array(1024) immutable source of truth (from SPR or first opened PAL)
+  workPal: null,        // Uint8Array(1024) current editable palette
+  loadedCustom: null,   // Uint8Array(1024) a separately opened custom PAL (for remap)
+  used: new Set(),      // indices used by sprite frames
+  locked: new Set(),    // user-locked indices
+  selected: new Set(),  // selected indices
+  primary: -1,          // primary selected index (for editor)
+  areas: [],            // [{name,indices:[],hue,locked}]
+  selArea: -1,
+  src: "baked",         // "baked" | "custom" view source
+  curFrame: 0,
+  zoom: 4,
+  hoverIdx: -1,         // palette index hovered (highlights sprite)
+  playing: false,
+  playTimer: null,
+  fps: 8,
+  gender: "female",
+  baseName: "",
+  map: null,            // remap result
+  adjLive: null,        // snapshot for live adjust preview
+};
+const MAGENTA = [255,0,255];
+
+/* ---------- DOM helpers ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+function toast(msg, kind){ const t=$("#toast"); t.textContent=msg; t.className="show "+(kind||""); clearTimeout(t._t); t._t=setTimeout(()=>t.className="",2200); }
+
+/* ============================================================
+   Binary parsing
+   ============================================================ */
+function parseSpr(buf){
+  const dv = new DataView(buf);
+  if (dv.getUint8(0)!==0x53 || dv.getUint8(1)!==0x50) throw new Error("Not an SP sprite");
+  const vmin = dv.getUint8(2), vmaj = dv.getUint8(3);
+  let off = 4;
+  const nIdx = dv.getUint16(off,true); off+=2;
+  let nRgba = 0;
+  if (vmaj>=2){ nRgba = dv.getUint16(off,true); off+=2; }
+  const rle = (vmaj>2)||(vmaj===2&&vmin>=1);
+  const frames=[];
+  for (let i=0;i<nIdx;i++){
+    const w=dv.getUint16(off,true), h=dv.getUint16(off+2,true); off+=4;
+    const pix=new Uint8Array(w*h);
+    if (rle){
+      const clen=dv.getUint16(off,true); off+=2;
+      const end=off+clen; let p=0;
+      while(off<end && p<pix.length){
+        const b=dv.getUint8(off++);
+        if (b===0){ const cnt=dv.getUint8(off++); for(let k=0;k<cnt&&p<pix.length;k++) pix[p++]=0; }
+        else pix[p++]=b;
+      }
+      off=end;
+    } else {
+      for(let k=0;k<w*h;k++) pix[k]=dv.getUint8(off++);
+    }
+    frames.push({w,h,pix});
+  }
+  const rgbaFrames=[];
+  for(let i=0;i<nRgba;i++){
+    const w=dv.getUint16(off,true), h=dv.getUint16(off+2,true); off+=4;
+    const px=new Uint8Array(buf.slice(off,off+w*h*4)); off+=w*h*4;
+    rgbaFrames.push({w,h,px});
+  }
+  // palette = last 1024 bytes
+  const bakedPal=new Uint8Array(buf.slice(buf.byteLength-1024));
+  return {ver:`${vmaj}.${vmin}`, frames, rgbaFrames, bakedPal, nIdx, nRgba};
+}
+
+function parsePal(buf){
+  if (buf.byteLength<1024) throw new Error("PAL must be 1024 bytes");
+  return new Uint8Array(buf.slice(0,1024));
+}
+
+function parseAct(buf){
+  const dv=new DataView(buf);
+  if (dv.getUint8(0)!==0x41||dv.getUint8(1)!==0x43) return null; // "AC"
+  const vmin=dv.getUint8(2), vmaj=dv.getUint8(3);
+  let off=4;
+  const nAct=dv.getUint16(off,true); off+=2; off+=10; // reserved
+  const actions=[];
+  for(let a=0;a<nAct;a++){
+    const nFrame=dv.getUint32(off,true); off+=4;
+    const frames=[];
+    for(let f=0;f<nFrame;f++){
+      off+=32; // range1/range2
+      const nLayer=dv.getUint32(off,true); off+=4;
+      const layers=[];
+      for(let l=0;l<nLayer;l++){
+        const x=dv.getInt32(off,true), y=dv.getInt32(off+4,true);
+        const spr=dv.getInt32(off+8,true); off+=12;
+        off+=4; // mirror
+        if((vmaj===2&&vmin>=0)||vmaj>2){ off+=16; off+=4; } // color rgba + scaleX
+        if((vmaj===2&&vmin>=4)||vmaj>2){ off+=4; } // scaleY
+        if((vmaj===2&&vmin>=0)||vmaj>2){ off+=4; off+=4; } // rotate + type
+        if((vmaj===2&&vmin>=5)||vmaj>2){ off+=8; } // width/height
+        layers.push({x,y,spr});
+      }
+      // anchors / event (best-effort skip)
+      if((vmaj===2&&vmin>=0)||vmaj>2){ off+=4; } // event id
+      if((vmaj===2&&vmin>=3)||vmaj>2){ const nAnc=dv.getUint32(off,true); off+=4; off+=nAnc*16; }
+      frames.push({layers});
+    }
+    actions.push({frames});
+  }
+  return {ver:`${vmaj}.${vmin}`, actions, nAct};
+}
+
+/* ---------- build a .pal file (1024 bytes, alpha=0 per RO convention) ---------- */
+function buildPalBytes(pal){
+  const out=new Uint8Array(1024);
+  for(let i=0;i<256;i++){ out[i*4]=pal[i*4]; out[i*4+1]=pal[i*4+1]; out[i*4+2]=pal[i*4+2]; out[i*4+3]=0; }
+  return out;
+}
+
+/* ============================================================
+   Color utilities
+   ============================================================ */
+function getRGB(pal,i){ return [pal[i*4],pal[i*4+1],pal[i*4+2]]; }
+function setRGB(pal,i,r,g,b){ pal[i*4]=clamp8(r); pal[i*4+1]=clamp8(g); pal[i*4+2]=clamp8(b); }
+function clamp8(v){ return v<0?0:v>255?255:Math.round(v); }
+function isMagenta(pal,i){ return pal[i*4]===255&&pal[i*4+1]===0&&pal[i*4+2]===255; }
+function hex2(n){ return n.toString(16).padStart(2,"0"); }
+function rgb2hex(r,g,b){ return "#"+hex2(r)+hex2(g)+hex2(b); }
+function hex2rgb(h){ h=h.replace("#",""); if(h.length===3)h=[...h].map(c=>c+c).join(""); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+
+function rgb2hsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;
+  let h=0,s=0,l=(mx+mn)/2;
+  if(d){ s=l>0.5?d/(2-mx-mn):d/(mx+mn);
+    if(mx===r)h=((g-b)/d+(g<b?6:0));
+    else if(mx===g)h=((b-r)/d+2);
+    else h=((r-g)/d+4);
+    h*=60;
+  }
+  return [h,s,l];
+}
+function hsl2rgb(h,s,l){
+  h=((h%360)+360)%360;
+  const c=(1-Math.abs(2*l-1))*s, x=c*(1-Math.abs((h/60)%2-1)), m=l-c/2;
+  let r,g,b;
+  if(h<60)[r,g,b]=[c,x,0]; else if(h<120)[r,g,b]=[x,c,0]; else if(h<180)[r,g,b]=[0,c,x];
+  else if(h<240)[r,g,b]=[0,x,c]; else if(h<300)[r,g,b]=[x,0,c]; else [r,g,b]=[c,0,x];
+  return [(r+m)*255,(g+m)*255,(b+m)*255];
+}
+function hueName(h,s){
+  if(s<0.12) return "neutral";
+  const names=[[15,"red"],[45,"orange"],[70,"yellow"],[160,"green"],[200,"cyan"],[255,"blue"],[290,"purple"],[330,"magenta"],[360,"red"]];
+  for(const [t,n] of names) if(h<t) return n;
+  return "red";
+}
+
+/* ============================================================
+   Rendering
+   ============================================================ */
+function activePal(){ return S.src==="custom" ? S.workPal : (S.workPal||S.bakedPal); }
+// In editing we always edit workPal. "src" toggle just controls which to *display*.
+// Baked view shows immutable bakedPal; Custom view shows workPal (the edited one).
+function displayPal(){ return S.src==="baked" ? S.bakedPal : S.workPal; }
+
+function renderFrame(){
+  const cv=$("#view"); if(!S.spr) return;
+  const fr=S.spr.frames[S.curFrame]; if(!fr) return;
+  const pal=displayPal();
+  const z=S.zoom;
+  cv.width=fr.w*z; cv.height=fr.h*z;
+  const ctx=cv.getContext("2d");
+  ctx.imageSmoothingEnabled=false;
+  // build pixel buffer at 1x then scale
+  const off=document.createElement("canvas"); off.width=fr.w; off.height=fr.h;
+  const octx=off.getContext("2d");
+  const img=octx.createImageData(fr.w,fr.h);
+  const hov=S.hoverIdx;
+  const dimAll = hov>=0;
+  for(let p=0;p<fr.pix.length;p++){
+    const idx=fr.pix[p]; const o=p*4;
+    if(idx===0){ img.data[o+3]=0; continue; }
+    let r=pal[idx*4],g=pal[idx*4+1],b=pal[idx*4+2];
+    if(r===255&&g===0&&b===255){ img.data[o+3]=0; continue; } // magenta = transparent
+    if(dimAll){
+      if(idx===hov){ /* keep bright */ }
+      else { r=r*0.28+10; g=g*0.28+10; b=b*0.28+12; }
+    }
+    img.data[o]=r; img.data[o+1]=g; img.data[o+2]=b; img.data[o+3]=255;
+  }
+  octx.putImageData(img,0,0);
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.drawImage(off,0,0,cv.width,cv.height);
+}
+
+/* Briefly flash an area's pixels on the sprite (cyan, fades over ~0.6s) so the
+   detected coverage is verifiable at a glance. */
+function flashArea(indices){
+  if(!S.spr||!indices||!indices.length) return;
+  const cv=$("#view"); if(!cv) return;
+  const fr=S.spr.frames[S.curFrame]; if(!fr) return;
+  const ctx=cv.getContext("2d");
+  const set=new Set(indices);
+  const ov=document.createElement("canvas"); ov.width=fr.w; ov.height=fr.h;
+  const octx=ov.getContext("2d"); const img=octx.createImageData(fr.w,fr.h);
+  let any=false;
+  for(let p=0;p<fr.pix.length;p++){
+    const idx=fr.pix[p]; if(idx===0||!set.has(idx)) continue;
+    const o=p*4; img.data[o]=80; img.data[o+1]=240; img.data[o+2]=255; img.data[o+3]=200; any=true;
+  }
+  if(!any) return;
+  octx.putImageData(img,0,0);
+  if(S._flash) cancelAnimationFrame(S._flash);
+  const dur=620, t0=performance.now();
+  function tick(now){
+    const t=Math.min(1,(now-t0)/dur);
+    const a = t<0.18 ? t/0.18 : 1-((t-0.18)/0.82);
+    renderFrame();
+    ctx.save(); ctx.globalAlpha=Math.max(0,a); ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(ov,0,0,cv.width,cv.height); ctx.restore();
+    if(t<1){ S._flash=requestAnimationFrame(tick); } else { S._flash=null; renderFrame(); }
+  }
+  S._flash=requestAnimationFrame(tick);
+}
+
+function renderStrip(){
+  const strip=$("#strip"); strip.innerHTML="";
+  if(!S.spr) return;
+  S.spr.frames.forEach((fr,i)=>{
+    const d=document.createElement("div");
+    d.className="thumb"+(i===S.curFrame?" active":"");
+    const c=document.createElement("canvas"); c.width=fr.w; c.height=fr.h;
+    const ctx=c.getContext("2d"); const img=ctx.createImageData(fr.w,fr.h);
+    const pal=displayPal();
+    for(let p=0;p<fr.pix.length;p++){
+      const idx=fr.pix[p],o=p*4;
+      if(idx===0){img.data[o+3]=0;continue;}
+      const r=pal[idx*4],g=pal[idx*4+1],b=pal[idx*4+2];
+      if(r===255&&g===0&&b===255){img.data[o+3]=0;continue;}
+      img.data[o]=r;img.data[o+1]=g;img.data[o+2]=b;img.data[o+3]=255;
+    }
+    ctx.putImageData(img,0,0);
+    d.appendChild(c);
+    const n=document.createElement("span"); n.className="n"; n.textContent=i; d.appendChild(n);
+    d.onclick=()=>{ S.curFrame=i; renderStrip(); renderFrame(); };
+    strip.appendChild(d);
+  });
+}
+
+function renderPalette(){
+  const grid=$("#pgrid"); grid.innerHTML="";
+  const pal=displayPal();
+  for(let i=0;i<256;i++){
+    const sw=document.createElement("div"); sw.className="sw"; sw.dataset.i=i;
+    const r=pal[i*4],g=pal[i*4+1],b=pal[i*4+2];
+    sw.style.background=`rgb(${r},${g},${b})`;
+    if(isMagenta(pal,i)) sw.classList.add("locked");
+    if(!S.used.has(i)&&i!==0) sw.classList.add("unused");
+    if(S.locked.has(i)){ sw.classList.add("locked"); const lk=document.createElement("span"); lk.className="lk"; lk.textContent="🔒"; sw.appendChild(lk); }
+    if(S.selected.has(i)) sw.classList.add("sel");
+    if(i===S.hoverIdx) sw.classList.add("hov");
+    sw.title=`#${i}  ${rgb2hex(r,g,b)}${S.used.has(i)?"":"  (unused)"}`;
+    sw.onclick=(e)=>onSwatchClick(i,e);
+    sw.onmouseenter=()=>{ S.hoverIdx=i; renderFrame(); markHov(); };
+    sw.onmouseleave=()=>{ S.hoverIdx=-1; renderFrame(); markHov(); };
+    grid.appendChild(sw);
+  }
+  $("#palCount").textContent=`(256 · ${S.used.size} used)`;
+}
+function markHov(){
+  $$("#pgrid .sw").forEach(sw=>{ sw.classList.toggle("hov", +sw.dataset.i===S.hoverIdx); });
+}
+
+/* ============================================================
+   Selection / locking
+   ============================================================ */
+function areaOfIndex(i){ for(const a of (S.areas||[])) if(a.indices.includes(i)) return a; return null; }
+function toggleAreaLock(a){
+  a.locked=!a.locked;
+  a.indices.forEach(k=>{ if(a.locked)S.locked.add(k); else S.locked.delete(k); });
+  renderAreas(); renderPalette(); updateAdjScope();
+}
+function onSwatchClick(i,e){
+  const mode=S.palMode||"pick";
+  if(e.altKey || mode==="lock"){
+    const a=(mode==="lock")?areaOfIndex(i):null;
+    if(a) toggleAreaLock(a); else toggleLock(i);
+    return;
+  }
+  if(mode==="area"){
+    const a=areaOfIndex(i);
+    if(a){ S.selArea=S.areas.indexOf(a); S.selected=new Set(a.indices); S.primary=-1; renderAreas(); refreshSelection(); flashArea(a.indices); return; }
+    // fall through to single-pick if no area
+  }
+  if(e.shiftKey){ if(S.selected.has(i))S.selected.delete(i); else S.selected.add(i); }
+  else { S.selected.clear(); S.selected.add(i); }
+  S.selArea=-1; S.primary=i;
+  refreshSelection();
+}
+function toggleLock(i){
+  if(i===0||isMagenta(displayPal(),i)){ toast("Index 0 & magenta are always reserved",""); return; }
+  if(S.locked.has(i))S.locked.delete(i); else S.locked.add(i);
+  renderPalette(); updateAdjScope();
+}
+/* indices the editor will change: the current selection, minus reserved/locked */
+function selTargets(){ return [...S.selected].filter(i=>i!==0&&!isMagenta(S.workPal,i)&&!S.locked.has(i)); }
+function setEditUI(r,g,b){
+  r=clamp8(r);g=clamp8(g);b=clamp8(b);
+  const hex=rgb2hex(r,g,b);
+  $("#bigSw").value=hex; $("#hexIn").value=hex;
+  $("#rIn").value=r;$("#gIn").value=g;$("#bIn").value=b;
+  $("#rVal").textContent=r;$("#gVal").textContent=g;$("#bVal").textContent=b;
+}
+/* Apply a chosen colour: one index = absolute; many = tone-preserving recolour
+   (take the colour's hue+sat, keep each index's own lightness). */
+function applyEditColor(r,g,b){
+  const t=selTargets();
+  if(t.length<=1){
+    const i = t.length?t[0]:S.primary;
+    if(i>=1 && !isMagenta(S.workPal,i) && !S.locked.has(i)) setRGB(S.workPal,i,r,g,b);
+  } else {
+    const [th,ts]=rgb2hsl(r,g,b);
+    for(const i of t){ const [,,l]=rgb2hsl(...getRGB(S.workPal,i)); const [nr,ng,nb]=hsl2rgb(th,ts,l); setRGB(S.workPal,i,nr,ng,nb); }
+  }
+  markCustom(); paintRefresh(); renderAreas();
+}
+function refreshSelection(){
+  renderPalette();
+  const pal=displayPal();
+  const t=selTargets();
+  const has = t.length>0 || S.primary>=1;
+  if(has){
+    let r,g,b,meta;
+    if(t.length>1){
+      const st=areaStats(pal,t); [r,g,b]=hsl2rgb(st.h, Math.max(0.06, st.s||0.4), 0.5);
+      meta=`${t.length} selected${S.selArea>=0?` · ${S.areas[S.selArea].name}`:""} · edits keep shading`;
+    } else {
+      const i=t.length?t[0]:S.primary; [r,g,b]=getRGB(pal,i); const [h,s,l]=rgb2hsl(r,g,b);
+      meta=`#${i} · H${Math.round(h)} S${Math.round(s*100)} L${Math.round(l*100)}${S.locked.has(i)?" · 🔒":""}`;
+    }
+    setEditUI(r,g,b);
+    $("#selMeta").textContent=meta;
+  } else {
+    $("#selMeta").textContent="select a swatch";
+  }
+  updateAdjScope();
+}
+function updateAdjScope(){
+  const n=editTargets().length;
+  let label;
+  if(S.selArea>=0) label=`area: ${S.areas[S.selArea].name}`;
+  else if(S.selected.size) label=`${S.selected.size} selected`;
+  else label=`all used (${n})`;
+  $("#adjScope").textContent=label;
+}
+
+/* indices that edits should affect (never magenta/index0/locked) */
+function editTargets(){
+  let base;
+  if(S.selArea>=0) base=S.areas[S.selArea].indices;
+  else if(S.selected.size) base=[...S.selected];
+  else base=[...S.used];
+  const pal=displayPal();
+  return base.filter(i=>i!==0 && !isMagenta(pal,i) && !S.locked.has(i));
+}
+
+
+/* ============================================================
+   File loading
+   ============================================================ */
+function recomputeUsed(){
+  S.used=new Set();
+  if(!S.spr) return;
+  for(const fr of S.spr.frames) for(const v of fr.pix) if(v!==0) S.used.add(v);
+}
+function afterSprLoad(name){
+  S.bakedPal=new Uint8Array(S.spr.bakedPal);
+  S.workPal=new Uint8Array(S.spr.bakedPal);
+  recomputeUsed();
+  S.locked=new Set(); S.selected=new Set(); S.primary=-1;
+  S.areas=[]; S.selArea=-1; S.curFrame=0; S.src="baked";
+  S.mounts=[]; S.mapLocked=false; if(typeof renderMounts==="function") renderMounts(); if(typeof renderMountDock==="function") renderMountDock(); if(typeof updateLockMapUI==="function") updateLockMapUI();
+  if(typeof renderGroups==="function" && !$(".pane[data-pane=macro]")?.classList.contains("hidden")) renderGroups();
+  $("#emptyMsg").classList.add("hidden");
+  $("#view").classList.remove("hidden");
+  $("#playbar").classList.remove("hidden");
+  $("#savePal").disabled=false; $("#resetPal").disabled=false;
+  $("#fname").textContent=`${name} — ${S.spr.frames.length} frames`;
+  $("#expBase").value=mountBaseName(name);          // follow the loaded sprite's name
+  if($("#expAlias")) $("#expAlias").value="";       // aliases belong to the previous character
+  { const g=genderFromName(name); if(g) setGender(g); }   // and its gender (it's in the filename)
+  setSrc("baked");
+  renderAll(); renderInfo(); autoDetectAreas("med"); if(typeof migrateMacroKeys==="function") migrateMacroKeys(); updateNamePreview();
+}
+function renderAll(){ renderStrip(); renderFrame(); renderPalette(); refreshSelection(); }
+
+function loadSprFile(file){
+  const fr=new FileReader();
+  fr.onload=()=>{ try{ S.spr=parseSpr(fr.result); afterSprLoad(file.name); toast("Sprite loaded","ok"); }
+    catch(e){ toast("SPR error: "+e.message,"err"); } };
+  fr.readAsArrayBuffer(file);
+}
+function loadPalFile(file){
+  const fr=new FileReader();
+  fr.onload=()=>{ try{
+      const pal=parsePal(fr.result);
+      if(!S.spr){ // no sprite: treat pal as baked source
+        S.bakedPal=new Uint8Array(pal); S.workPal=new Uint8Array(pal);
+        toast("Palette loaded (no sprite)","ok");
+      } else if(S.mapLocked && S.map){
+        // map is locked: treat the loaded .pal as a custom-structure palette and
+        // preview it on the sprite by pulling colours back through the locked map.
+        previewCustomPal(pal);
+        toast("Previewing custom palette on sprite (map locked)","ok");
+      } else {
+        S.loadedCustom=new Uint8Array(pal);
+        let identical=0; for(let i=0;i<256;i++){ const a=getRGB(S.bakedPal,i),b=getRGB(pal,i); if(a[0]===b[0]&&a[1]===b[1]&&a[2]===b[2]) identical++; }
+        if(identical>200){
+          // same structure (e.g. a mount palette) — apply directly for editing + preview
+          S.workPal=new Uint8Array(pal); setSrc("custom");
+          if($("#expStruct")) $("#expStruct").value="baked";
+          // identity map so the Lock-map / preview workflow works here too
+          S.map=[]; for(let i=1;i<256;i++){ if(!isMagenta(S.bakedPal,i) && (!S.used.size||S.used.has(i))) S.map.push({from:i,to:i,exact:true}); }
+          if($("#mapExact")) $("#mapExact").textContent=S.map.length; if($("#mapNear")) $("#mapNear").textContent=0;
+          renderMapList(); updateLockMapUI();
+          // re-detect areas on the now-visible custom colours so locking matches what you see
+          autoDetectAreas($("#areaGran")?.value||"balanced");
+          toast("Custom palette applied — areas re-detected on these colors","ok");
+        } else {
+          // different structure (e.g. base char, Gravity vs sprite layout) — use as the
+          // in-game export structure; keep the preview on the sprite's own palette.
+          const r=buildMap();
+          if($("#expStruct")) $("#expStruct").value="custom";
+          updateLockMapUI();
+          toast(`Custom structure loaded — Lock the map (Remap tab) to preview generated palettes (${r.exact} exact, ${r.near} nearest)`,"ok");
+        }
+      }
+      renderAll(); renderInfo();
+    } catch(e){ toast("PAL error: "+e.message,"err"); } };
+  fr.readAsArrayBuffer(file);
+}
+/* Preview a custom-structure palette on the sprite by pulling each mapped
+   custom colour back to its baked index (inverse of the export remap). */
+function previewCustomPal(customPal){
+  if(!S.map){ S.workPal=new Uint8Array(customPal); setSrc("custom"); renderAll(); return; }
+  const work=new Uint8Array(S.bakedPal);
+  for(const m of S.map){ const c=getRGB(customPal, m.to); setRGB(work, m.from, c[0],c[1],c[2]); }
+  S.workPal=work; setSrc("custom"); renderAll();
+}
+function updateLockMapUI(){
+  const b=$("#lockMap"); if(!b) return;
+  const has=!!S.map;
+  b.disabled=!has;
+  b.textContent = S.mapLocked ? "🔓 Unlock map" : "🔒 Lock map";
+  b.classList.toggle("gold", !!S.mapLocked);
+  const n=$("#lockMapNote"); if(n) n.textContent = S.mapLocked
+    ? "Map locked — loading a .pal previews it on the sprite (remapped through this map). Unlock to set a new reference."
+    : "Lock the map, then load your generated custom .pals to preview them on the sprite without rebuilding the map.";
+}
+/* ===== Mount palettes ===== */
+function usedFrom(frames){ const u=new Set(); for(const f of frames) for(const v of f.pix) if(v!==0) u.add(v); return u; }
+
+// base character index -> mount baked index, by colour (exact first, then nearest, unique)
+function buildMountMap(baseBaked, baseUsed, mBaked){
+  const map=[], taken=new Set(), pend=[];
+  const src=[...baseUsed].filter(i=>i!==0&&!isMagenta(baseBaked,i)).sort((a,b)=>a-b);
+  for(const j of src){ const bc=getRGB(baseBaked,j); let f=-1;
+    for(let i=1;i<256;i++){ if(taken.has(i)||isMagenta(mBaked,i)) continue; const cc=getRGB(mBaked,i);
+      if(cc[0]===bc[0]&&cc[1]===bc[1]&&cc[2]===bc[2]){ f=i; break; } }
+    if(f>=0){ taken.add(f); map.push({baseIdx:j,mountIdx:f,exact:true}); } else pend.push(j); }
+  for(const j of pend){ const bc=getRGB(baseBaked,j); let b=-1,bd=1e9;
+    for(let i=1;i<256;i++){ if(taken.has(i)||isMagenta(mBaked,i)) continue; const d=colorDist(bc,getRGB(mBaked,i)); if(d<bd){bd=d;b=i;} }
+    if(b>=0){ taken.add(b); map.push({baseIdx:j,mountIdx:b,exact:false}); } }
+  return map;
+}
+// build a mount palette: transfer the (recoloured) character colours, then theme the
+// mount-specific areas with the same scheme so it coordinates with the character.
+function buildMountPal(mount, sc, baseRecolored){
+  // Index-aligned rider: the mount sprite embeds the character's body palette at the SAME
+  // indices, so the rider follows the character's recolour exactly by copying baseRecolored
+  // at the rider slots. The mount-only areas are themed with the scheme; magenta/locks kept.
+  const pal=new Uint8Array(mount.baked);
+  const rider=mount.rider||new Set();
+  for(const i of rider){ if(isMagenta(mount.baked,i)||isMagenta(baseRecolored,i)) continue; const c=getRGB(baseRecolored,i); setRGB(pal,i,c[0],c[1],c[2]); }
+  if(sc&&sc.roles&&sc.roles.length){
+    const areas=mount.areas.filter(a=>!a.locked).slice().sort((a,b)=>(b.used||0)-(a.used||0));
+    let ri=0;
+    for(const a of areas){
+      const edit=a.indices.filter(i=>i!==0&&!isMagenta(pal,i)&&!rider.has(i));
+      if(!edit.length) continue;
+      const role=sc.roles[ri%sc.roles.length]; ri++; if(!role) continue;
+      for(const i of edit){ let [,,l]=rgb2hsl(...getRGB(pal,i)); l=Math.max(0,Math.min(1, 0.5+(l-0.5)*(1+(role.dc||0))+(role.dv||0) ));
+        const [r,g,b]= role.grey?hsl2rgb(0,0,l):hsl2rgb(role.h,role.s,l); setRGB(pal,i,r,g,b); }
+    }
+  }
+  return pal;
+}
+
+function mountBaseName(fname){ return fname.replace(/_(0|¿©|³²).*?\.(spr|pal)$/i,"").replace(/\.(spr|pal)$/i,"").replace(/[_0-9]+$/,""); }
+function isBlack(p,i){ return p[i*4]===0&&p[i*4+1]===0&&p[i*4+2]===0; }
+// base recoloured (baked structure) -> base custom structure, via the base map + loaded custom
+function baseToCustom(workBaked){
+  if(!S.map||!S.loadedCustom) return new Uint8Array(workBaked);
+  const out=new Uint8Array(S.loadedCustom);
+  for(const m of S.map){ const c=getRGB(workBaked,m.from); setRGB(out,m.to,c[0],c[1],c[2]); }
+  return out;
+}
+
+function addMountFiles(fileList){
+  if(!S.spr){ toast("Load the base class sprite first","err"); return; }
+  const arr=[...fileList].filter(f=>/\.spr$/i.test(f.name));
+  if(![...fileList].length){ return; }
+  if(!arr.length){ toast("Mounts use the mount's own .spr — drop the original mount sprite","err"); return; }
+  let done=0; const total=arr.length;
+  const fin=()=>{ if(++done===total){ renderMounts(); if(typeof renderMountDock==="function") renderMountDock(); if(typeof migrateMacroKeys==="function") migrateMacroKeys(); if(typeof renderGroups==="function" && !$(".pane[data-pane=macro]")?.classList.contains("hidden")) renderGroups(); toast(`Added ${total} mount(s)`,"ok"); } };
+  arr.forEach(file=>{
+    const fr=new FileReader();
+    fr.onload=()=>{ try{
+      const spr=parseSpr(fr.result);
+      const baked=spr.bakedPal, used=usedFrom(spr.frames);
+      // RIDER = index-alignment, not baked-colour match. A mount slot is rider iff the
+      // standalone CHARACTER actually draws with that same palette index — that's the
+      // RO mechanism (the mount embeds the rider at the character's indices so the
+      // player's .pal colours it). Baked colours can differ between separately authored
+      // sprites, so colour-matching wrongly drops true rider slots (e.g. a Warg's skin).
+      const charUsed=S.used||new Set();
+      const riderBase=new Set();
+      // A slot is rider only if the character draws a REAL colour there. Skip slots that are
+      // magenta in the character palette: the character renders those transparent, so copying
+      // that magenta onto the mount (which may use the slot for a real colour) would punch a
+      // transparent hole. Such slots belong to the mount (beast).
+      for(const i of used){ if(i===0||isMagenta(baked,i)) continue; if(charUsed.has(i) && !isMagenta(S.bakedPal,i)) riderBase.add(i); }
+      const mountUsed=new Set([...used].filter(i=>!riderBase.has(i)));
+      const areas=detectAreasOn(baked, mountUsed, $("#areaGran")?.value||"med");
+      const m={name:file.name, base:mountBaseName(file.name), baked, used, riderBase, classOverride:{}, rider:new Set(riderBase), areas, frames:spr.frames, aliases:[]};
+      recomputeMountRider(m);
+      S.mounts.push(m);
+    }catch(e){ toast("Mount parse failed: "+e.message,"err"); }
+      fin();
+    };
+    fr.readAsArrayBuffer(file);
+  });
+}
+
+function drawMountThumb(cv, m, highlight){
+  const hi = highlight ? (highlight instanceof Set ? highlight : new Set(highlight)) : null;
+  const rider=m.rider||new Set();
+  let fr=m.frames&&m.frames[0];
+  for(const f of (m.frames||[])) if(f.w*f.h>fr.w*fr.h) fr=f;
+  if(!fr){ cv.width=cv.height=1; return; }
+  const pal=new Uint8Array(m.baked);
+  if(S.workPal) for(const i of rider){ if(isMagenta(m.baked,i)||isMagenta(S.workPal,i)) continue; const c=getRGB(S.workPal,i); setRGB(pal,i,c[0],c[1],c[2]); }
+  const tmp=document.createElement("canvas"); tmp.width=fr.w; tmp.height=fr.h;
+  const tctx=tmp.getContext("2d"); const img=tctx.createImageData(fr.w,fr.h);
+  for(let p=0;p<fr.pix.length;p++){ const idx=fr.pix[p],o=p*4;
+    if(idx===0||isMagenta(pal,idx)){ img.data[o+3]=0; continue; }
+    let r=pal[idx*4],g=pal[idx*4+1],b=pal[idx*4+2];
+    if(hi){ if(hi.has(idx)){ r=Math.min(255,r*1.1+50); g=Math.min(255,g*1.1+50); b=Math.min(255,b*0.55); } else { r=r*0.30+8; g=g*0.30+8; b=b*0.30+10; } }
+    img.data[o]=r; img.data[o+1]=g; img.data[o+2]=b; img.data[o+3]=255; }
+  tctx.putImageData(img,0,0);
+  const maxd=104, sc=Math.min(maxd/fr.w, maxd/fr.h, 3);
+  cv.width=Math.max(1,Math.round(fr.w*sc)); cv.height=Math.max(1,Math.round(fr.h*sc));
+  const ctx=cv.getContext("2d"); ctx.imageSmoothingEnabled=false; ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.drawImage(tmp,0,0,cv.width,cv.height);
+}
+
+function renderMountDock(){
+  const dock=$("#mountDock"), body=$("#mdockBody"), reopen=$("#mdockReopen");
+  if(!dock||!body) return;
+  const has=S.mounts&&S.mounts.length;
+  if(!has){ dock.classList.add("hidden"); if(reopen) reopen.classList.add("hidden"); return; }
+  if(S.mdockHidden){ dock.classList.add("hidden"); if(reopen) reopen.classList.remove("hidden"); return; }
+  if(reopen) reopen.classList.add("hidden");
+  dock.classList.remove("hidden");
+  body.innerHTML="";
+  S.mounts.forEach((m,mmi)=>{
+    const w=document.createElement("div"); w.className="mdock-item";
+    const cv=document.createElement("canvas"); cv.id="mdockcv-"+mmi; cv.className="mdock-cv"; drawMountThumb(cv,m);
+    const lbl=document.createElement("div"); lbl.className="mdock-lbl"; lbl.textContent=m.base||m.name;
+    w.append(cv,lbl); body.appendChild(w);
+  });
+}
+function flashMountArea(mmi, anchor){
+  const m=S.mounts&&S.mounts[mmi]; if(!m) return;
+  if(S.mdockHidden){ S.mdockHidden=false; }
+  renderMountDock();
+  const beast=mountBeastAreas(m).find(x=>x.anchor===anchor);
+  const cv=$("#mdockcv-"+mmi); if(!cv||!beast) return;
+  drawMountThumb(cv, m, beast.indices);
+  S._mdockT=S._mdockT||{}; clearTimeout(S._mdockT[mmi]);
+  S._mdockT[mmi]=setTimeout(()=>{ const c=$("#mdockcv-"+mmi); if(c&&S.mounts&&S.mounts[mmi]) drawMountThumb(c, S.mounts[mmi]); }, 1100);
+}
+function renderMounts(){
+  const el=$("#mountList"); if(!el) return;
+  if(!S.mounts||!S.mounts.length){ el.innerHTML='<p class="note dim" style="text-align:center;padding:14px 0">No mount sprites added yet.</p>'; return; }
+  el.innerHTML="";
+  S.mounts.forEach((m,k)=>{
+    const wrap=document.createElement("div"); wrap.className="mountwrap";
+    const row=document.createElement("div"); row.className="mountrow";
+    const cv=document.createElement("canvas"); cv.className="mountthumb"; drawMountThumb(cv,m);
+    const info=document.createElement("div"); info.className="mountinfo";
+    if(typeof recomputeMountRider==="function") recomputeMountRider(m);
+    const rider=m.rider||new Set();
+    const beastList=()=>m.areas.filter(a=>areaClass(m,a)==="beast");
+    const riderUsed=[...m.used].filter(i=>rider.has(i)).length;
+    const magUsed=[...m.used].filter(i=>isMagenta(m.baked,i)).length;
+    const chk = magUsed>0
+      ? `<span class="mwarn">⚠ ${magUsed} sprite reads land on reserved magenta — will be transparent (use the original, not a re-indexed sprite)</span>`
+      : `<span class="mok">✓ rider ${riderUsed} slots index-aligned · no transparent reads</span>`;
+    info.innerHTML=`<b>${esc(m.base||m.name)}</b><span class="msub"></span><span>${chk}</span>`;
+    const sub=info.querySelector(".msub");
+    const setSub=()=>{ sub.textContent=`rider follows the character · ${beastList().length} themeable mount area(s)`; };
+    setSub();
+    const lockN=()=>beastList().filter(a=>a.locked).length;
+    const areasBtn=document.createElement("button"); areasBtn.className="btn ghost mareasbtn";
+    const setBtn=()=>{ const n=lockN(); areasBtn.textContent=`🔒 Lock mount areas${n?` (${n})`:""}`; };
+    setBtn();
+    const del=document.createElement("button"); del.className="btn ghost xbtn"; del.textContent="✕"; del.title="Remove";
+    del.onclick=()=>{ S.mounts.splice(k,1); renderMounts(); if(typeof renderMountDock==="function") renderMountDock(); };
+    const aliases = m.aliases || (m.aliases=[]);
+    const namesBtn=document.createElement("button"); namesBtn.className="btn ghost mnamesbtn";
+    const setNamesBtn=()=>{ namesBtn.textContent=`✎ Names${aliases.length?` (+${aliases.length})`:""}`; };
+    setNamesBtn();
+    info.appendChild(namesBtn);
+    info.appendChild(areasBtn);
+    row.append(cv,info,del);
+
+    // ----- Names / aliases panel -----
+    const namesPanel=document.createElement("div"); namesPanel.className="mountareas hidden";
+    const renderNames=()=>{
+      namesPanel.innerHTML="";
+      const hint=document.createElement("p"); hint.className="note dim"; hint.style.margin="0 0 6px";
+      hint.textContent="The mount palette is written under each name below as <name>"+genderSuffix()+"_<id>.pal. Add alias names if the client looks the mount up under more than one sprite name (e.g. the dragon under both ·é³ªÀÌÆ®»Ú¶ì and ·éµå·¡°ï).";
+      namesPanel.appendChild(hint);
+      const mkRow=(val,isPrimary,idx)=>{
+        const r=document.createElement("div"); r.className="mnamerow";
+        const inp=document.createElement("input"); inp.type="text"; inp.className="mnameinput"; inp.value=val;
+        inp.placeholder=isPrimary?"primary export name":"alias name";
+        inp.oninput=()=>{ if(isPrimary) m.base=inp.value; else aliases[idx]=inp.value; };
+        const tag=document.createElement("span"); tag.className="mnametag"; tag.textContent=isPrimary?"primary":"alias";
+        r.append(tag,inp);
+        if(!isPrimary){ const x=document.createElement("button"); x.className="btn ghost xbtn"; x.textContent="✕"; x.title="Remove alias";
+          x.onclick=()=>{ aliases.splice(idx,1); setNamesBtn(); renderNames(); }; r.append(x); }
+        return r;
+      };
+      namesPanel.appendChild(mkRow(m.base,true));
+      aliases.forEach((al,ai)=>namesPanel.appendChild(mkRow(al,false,ai)));
+      const add=document.createElement("button"); add.className="btn ghost"; add.style.marginTop="6px"; add.innerHTML='<span class="ic">＋</span> Add alias name';
+      add.onclick=()=>{ aliases.push(m.base); setNamesBtn(); renderNames(); };
+      namesPanel.appendChild(add);
+    };
+    namesBtn.onclick=()=>{ const open=!namesPanel.classList.contains("hidden"); namesPanel.classList.toggle("hidden"); if(!open) renderNames(); };
+
+    const panel=document.createElement("div"); panel.className="mountareas hidden";
+    const renderPanel=()=>{
+      panel.innerHTML="";
+      const hint=document.createElement("p"); hint.className="note dim"; hint.style.margin="0 0 6px";
+      hint.innerHTML="Each area is <b>Themeable</b> (part of the mount — recoloured &amp; lockable) or <b>Follows char</b> (rider — takes the character's colour). Auto-detected by palette index; click the tag to override a wrong guess. Hover to highlight · 🔒 keeps a themeable area's original colour.";
+      panel.appendChild(hint);
+      m.areas.filter(a=>a.indices.some(i=>i!==0&&!isMagenta(m.baked,i)&&(!m.used||m.used.has(i)))).forEach(a=>{
+        const isBeast=areaClass(m,a)==="beast";
+        const chip=document.createElement("div"); chip.className="machip"+(isBeast?"":" riderarea")+(isBeast&&a.locked?" locked":"");
+        const sw=document.createElement("span"); sw.className="maswatch";
+        sw.style.background=a.grey?`hsl(0,0%,${Math.round(a.light*100)}%)`:`hsl(${Math.round(a.hue)},${Math.round(Math.max(a.sat,.25)*100)}%,${Math.round(a.light*100)}%)`;
+        const lbl=document.createElement("span"); lbl.className="malabel"; lbl.textContent=a.name;
+        const tag=document.createElement("button"); tag.className="maclass "+(isBeast?"beast":"rider"); tag.textContent=isBeast?"Themeable":"Follows char"; tag.title="Click to switch rider/beast";
+        tag.onclick=(e)=>{ e.stopPropagation(); m.classOverride=m.classOverride||{}; const k=areaAnchor(a); const next=areaClass(m,a)==="beast"?"rider":"beast"; if(next===areaAutoClass(m,a)) delete m.classOverride[k]; else m.classOverride[k]=next; recomputeMountRider(m); drawMountThumb(cv,m); setSub(); setBtn(); renderPanel(); if(typeof renderMountDock==="function") renderMountDock(); if(typeof renderGroups==="function"&&!$(".pane[data-pane=macro]")?.classList.contains("hidden")) renderGroups(); };
+        const lk=document.createElement("span"); lk.className="malock"; lk.textContent=(isBeast&&a.locked)?"🔒":"";
+        chip.append(sw,lbl,tag,lk);
+        if(isBeast){ chip.classList.add("clk"); chip.onclick=()=>{ a.locked=!a.locked; renderPanel(); setBtn(); }; }
+        chip.onmouseenter=()=>drawMountThumb(cv,m,a.indices);
+        chip.onmouseleave=()=>drawMountThumb(cv,m,null);
+        panel.appendChild(chip);
+      });
+    };
+    areasBtn.onclick=()=>{ panel.classList.toggle("hidden"); if(!panel.classList.contains("hidden")) renderPanel(); };
+
+    wrap.append(row,namesPanel,panel); el.appendChild(wrap);
+  });
+}
+
+function loadActFile(file){
+  const fr=new FileReader();
+  fr.onload=()=>{ try{ S.act=parseAct(fr.result); toast(S.act?`ACT loaded · ${S.act.nAct} actions`:"Not an ACT","ok"); renderInfo(); }
+    catch(e){ toast("ACT error: "+e.message,"err"); } };
+  fr.readAsArrayBuffer(file);
+}
+
+/* ============================================================
+   Source toggle (baked vs custom)
+   ============================================================ */
+function setSrc(src){
+  S.src=src;
+  $$("#srcToggle button").forEach(b=>b.classList.toggle("on",b.dataset.src===src));
+  renderAll();
+}
+/* lightweight: flip to custom view + repaint frame/palette only (for live slider drags) */
+function markCustom(){
+  S.src="custom";
+  $$("#srcToggle button").forEach(b=>b.classList.toggle("on",b.dataset.src==="custom"));
+}
+function paintRefresh(){ renderFrame(); renderPalette(); }
+
+/* ============================================================
+   Canvas hover -> palette highlight + HUD
+   ============================================================ */
+function canvasPixel(e){
+  const cv=$("#view"), r=cv.getBoundingClientRect();
+  const fr=S.spr.frames[S.curFrame];
+  const x=Math.floor((e.clientX-r.left)/r.width*fr.w);
+  const y=Math.floor((e.clientY-r.top)/r.height*fr.h);
+  if(x<0||y<0||x>=fr.w||y>=fr.h) return null;
+  return {x,y,idx:fr.pix[y*fr.w+x]};
+}
+function onCanvasMove(e){
+  if(!S.spr) return;
+  const hit=canvasPixel(e);
+  const hud=$("#hud");
+  if(!hit||hit.idx===0){ hud.innerHTML=""; if(S.hoverIdx!==-1){S.hoverIdx=-1;renderFrame();markHov();} return; }
+  const pal=displayPal(); const [rr,gg,bb]=getRGB(pal,hit.idx);
+  hud.innerHTML=`<div class="chip"><span class="sw" style="background:rgb(${rr},${gg},${bb})"></span> #${hit.idx} ${rgb2hex(rr,gg,bb)}</div><div class="chip">${hit.x},${hit.y}</div>`;
+  if(S.hoverIdx!==hit.idx){ S.hoverIdx=hit.idx; renderFrame(); markHov(); scrollSwatchIntoView(hit.idx); }
+}
+function scrollSwatchIntoView(i){ const sw=$(`#pgrid .sw[data-i="${i}"]`); if(sw) sw.classList.add("hov"); }
+function onCanvasClick(e){
+  if(!S.spr) return;
+  const hit=canvasPixel(e); if(!hit||hit.idx===0) return;
+  if(e.altKey){ toggleLock(hit.idx); return; }
+  if(e.shiftKey){ if(S.selected.has(hit.idx))S.selected.delete(hit.idx); else S.selected.add(hit.idx); }
+  else { S.selected.clear(); S.selected.add(hit.idx); }
+  S.primary=hit.idx; S.selArea=-1;
+  $$("#areaList .area").forEach(a=>a.classList.remove("sel"));
+  refreshSelection();
+  setTab("palette");
+}
+
+/* ============================================================
+   Areas — cluster used colors by hue + tone
+   ============================================================ */
+/* Contiguous-run detection with neighbor-chaining + lightness-reset boundaries.
+   RO artists lay each material's ramp out as an adjacent block of indices and
+   reset to a bright value at the start of each new ramp, so ramps can sit
+   directly beside each other with no magenta wall between them. We therefore:
+     - walk contiguous indices (magenta + index 0 are hard walls),
+     - chain each step's hue to its *neighbor* (not a fixed seed) so a ramp
+       whose hue drifts shadow->highlight stays whole,
+     - cut at a sharp lightness jump, which marks the artist's ramp reset.
+   This keeps the dark/bright low-saturation ends attached to their own ramp
+   instead of being pooled into a shared neutral bin. */
+function autoDetectAreas(gran){
+  if(!S.spr){ return; }
+  S.areas=detectAreasOn(displayPal(), S.used, gran);
+  S.selArea=-1;
+  renderAreas();
+}
+/* Pure detector: returns area objects for an arbitrary palette + used-set. */
+function detectAreasOn(pal, used, gran){
+  const stepHue = gran==="loose"?40 : gran==="fine"?16 : 26;    // per-step hue drift (deg)
+  const LRESET  = gran==="loose"?0.30: gran==="fine"?0.17: 0.23; // lightness jump = ramp boundary
+  const GREY=0.15, GREY2=0.24;
+  const hd=(a,b)=>{ const d=Math.abs(a-b)%360; return Math.min(d,360-d); };
+  const ent=(i)=>{ const [r,g,b]=getRGB(pal,i); const [h,s,l]=rgb2hsl(r,g,b); return {h,s,l}; };
+  const circMean=(arr)=>{ let x=0,y=0; for(const h of arr){ const r=h*Math.PI/180; x+=Math.cos(r); y+=Math.sin(r); } if(x===0&&y===0) return 0; const d=Math.atan2(y,x)*180/Math.PI; return d<0?d+360:d; };
+  const assigned=new Array(256).fill(true);
+  for(let i=1;i<256;i++){ if(!isMagenta(pal,i)) assigned[i]=false; }
+  const areas=[];
+  for(let start=1;start<256;start++){
+    if(assigned[start]) continue;
+    const seedGrey = ent(start).s < GREY;
+    const join=(i,nb)=>{
+      if(i<1||i>255||assigned[i]) return false;
+      const e=ent(i);
+      if(Math.abs(e.l-nb.l) > LRESET) return false;
+      if(seedGrey) return e.s < GREY2;
+      if(e.s < GREY) return true;
+      return hd(e.h, nb.h) <= stepHue;
+    };
+    let lo=start, hi=start;
+    while(join(hi+1, ent(hi))) hi++;
+    while(join(lo-1, ent(lo))) lo--;
+    const indices=[];
+    for(let j=lo;j<=hi;j++){ if(!assigned[j]){ indices.push(j); assigned[j]=true; } }
+    if(!indices.length) continue;
+    const hs=[], ss=[], ls=[];
+    for(const i of indices){ const e=ent(i); ls.push(e.l); if(e.s>=GREY){ hs.push(e.h); ss.push(e.s); } }
+    const avgS=ss.length? ss.reduce((p,c)=>p+c,0)/ss.length : 0;
+    const avgH=circMean(hs);
+    const avgL=ls.reduce((p,c)=>p+c,0)/ls.length;
+    const grey = hs.length===0 || avgS<GREY;
+    indices.sort((a,b)=>ent(a).l-ent(b).l);
+    areas.push({name:hueName(avgH,avgS), indices, hue:avgH, sat:avgS, light:avgL, grey, locked:false, used:(used?indices.filter(i=>used.has(i)).length:indices.length)});
+  }
+  areas.sort((a,b)=>{ if(a.grey!==b.grey) return a.grey?1:-1; return a.hue-b.hue; });
+  const seen={};
+  for(const a of areas){ const nm=a.name; if(seen[nm]!=null){ seen[nm]++; a.name=nm+" "+seen[nm]; } else seen[nm]=1; }
+  return areas;
+}
+function renderAreas(){
+  const list=$("#areaList"); list.innerHTML="";
+  const pal=displayPal();
+  if(!S.areas.length){ list.innerHTML='<div class="note">No areas yet — click Auto-detect.</div>'; return; }
+  S.areas.forEach((a,ai)=>{
+    const d=document.createElement("div"); d.className="area"+(ai===S.selArea?" sel":"");
+    const ramp=document.createElement("div"); ramp.className="ramp";
+    a.indices.forEach(i=>{ const [r,g,b]=getRGB(pal,i); const s=document.createElement("i"); s.style.background=`rgb(${r},${g},${b})`; ramp.appendChild(s); });
+    d.innerHTML=`<span class="anm">${a.name}</span>`;
+    d.appendChild(ramp);
+    const cnt=document.createElement("span"); cnt.className="cnt"; cnt.textContent=a.used!=null?a.used:a.indices.length; cnt.title=`${a.indices.length} palette slots${a.used!=null?` · ${a.used} used`:""}`; d.appendChild(cnt);
+    const lk=document.createElement("span"); lk.className="alk"+(a.locked?" on":""); lk.textContent="🔒"; lk.title=a.locked?"Locked — click to unlock":"Click to lock this area";
+    lk.onclick=(e)=>{ e.stopPropagation(); a.locked=!a.locked; a.indices.forEach(i=>{ if(a.locked)S.locked.add(i); else S.locked.delete(i); }); renderAreas(); renderPalette(); };
+    d.appendChild(lk);
+    d.onclick=()=>{ S.selArea=ai; S.selected=new Set(a.indices); S.primary=-1; areaAdjReset(); renderAreas(); refreshSelection(); flashArea(a.indices); };
+    list.appendChild(d);
+  });
+}
+
+/* recolor area to a target color, preserving each index's lightness */
+function recolorTargets(targets, targetHex){
+  const [tr,tg,tb]=hex2rgb(targetHex); const [th,ts]=rgb2hsl(tr,tg,tb);
+  for(const i of targets){
+    const [r,g,b]=getRGB(S.workPal,i); const [,,l]=rgb2hsl(r,g,b);
+    const [nr,ng,nb]=hsl2rgb(th, ts, l);
+    setRGB(S.workPal,i,nr,ng,nb);
+  }
+  markCustom();
+}
+/* Per-area Sat/Bri/Con — scoped strictly to the selected area, live & non-cumulative. */
+function areaAdjReset(){ S.areaAdj=null; ["areaSat","areaBri","areaCon"].forEach(id=>{ const e=$("#"+id); if(e) e.value=0; }); ["areaSatV","areaBriV","areaConV"].forEach(id=>{ const e=$("#"+id); if(e) e.textContent="0%"; }); }
+function areaAdjApply(){
+  if(S.selArea<0 || !S.areas[S.selArea]){ areaAdjReset(); toast("Select an area first","err"); return; }
+  const tgt=S.areas[S.selArea].indices;
+  if(!S.areaAdj || S.areaAdj.area!==S.selArea) S.areaAdj={snap:new Uint8Array(S.workPal), area:S.selArea};  // snapshot this area's start
+  const p={ h:0, s:+$("#areaSat").value/100, b:+$("#areaBri").value/100, c:+$("#areaCon").value/100 };
+  const work=new Uint8Array(S.areaAdj.snap);
+  applyAdjustTo(S.areaAdj.snap, work, tgt, p);   // from snapshot → non-cumulative while dragging
+  S.workPal=work; markCustom(); paintRefresh(); renderAreas();
+}
+
+/* ============================================================
+   Adjust — tone-preserving HSL ops with live preview
+   ============================================================ */
+function adjReadParams(){
+  return { h:+$("#aHue").value, s:+$("#aSat").value/100, b:+$("#aBri").value/100, c:+$("#aCon").value/100 };
+}
+function applyAdjustTo(srcPal,destPal,targets,p){
+  for(const i of targets){
+    let [r,g,b]=getRGB(srcPal,i);
+    let [hh,ss,ll]=rgb2hsl(r,g,b);
+    hh+=p.h;
+    ss=Math.max(0,Math.min(1, ss*(1+p.s)));
+    // contrast around 0.5 then brightness
+    ll=0.5+(ll-0.5)*(1+p.c);
+    ll=Math.max(0,Math.min(1, ll+p.b));
+    [r,g,b]=hsl2rgb(hh,ss,ll);
+    setRGB(destPal,i,r,g,b);
+  }
+}
+function adjLivePreview(){
+  if(!S.workPal) return;
+  if(!S.adjLive) S.adjLive=new Uint8Array(S.workPal); // snapshot before adjusting
+  const p=adjReadParams();
+  const work=new Uint8Array(S.adjLive);
+  applyAdjustTo(S.adjLive, work, editTargets(), p);
+  S.workPal=work;
+  markCustom(); paintRefresh();
+}
+function adjBake(){
+  if(!S.adjLive){ toast("Nothing to bake",""); return; }
+  S.adjLive=null;
+  ["aHue","aSat","aBri","aCon"].forEach(id=>{ $("#"+id).value=0; $("#"+id+"V").textContent=0; });
+  toast("Adjustment baked in","ok");
+}
+function adjResetSliders(){
+  if(S.adjLive){ S.workPal=new Uint8Array(S.adjLive); S.adjLive=null; setSrc("custom"); }
+  ["aHue","aSat","aBri","aCon"].forEach(id=>{ $("#"+id).value=0; $("#"+id+"V").textContent=0; });
+}
+
+/* ============================================================
+   Generate — color-theory schemes
+   ============================================================ */
+/* scheme config: 'offs' = hue offsets from base; 'pick' = absolute hue family;
+   sat/val = character nudges applied in genPalette */
+/* Curated palettes — hand-picked colour sets (colorhunt / canva style), baked in
+   so the tool stays fully offline. Each is applied to areas like a scheme, but
+   carries its own hue + saturation per colour. */
+const CURATED=[
+  {n:"Sunset Glow", c:["#FF6B6B","#FFD93D","#FF9F45","#6A0572"]},
+  {n:"Ocean Breeze", c:["#05445E","#189AB4","#75E6DA","#D4F1F4"]},
+  {n:"Forest", c:["#2D4A22","#5A7D3C","#A4BE7B","#E5D9B6"]},
+  {n:"Autumn", c:["#6F1D1B","#BB9457","#99582A","#FFE6A7"]},
+  {n:"Pastel Dream", c:["#FFADAD","#FFD6A5","#FDFFB6","#CAFFBF","#9BF6FF"]},
+  {n:"Candy", c:["#FF5D8F","#FF87AB","#FFB3C6","#FFC2D1"]},
+  {n:"Vintage", c:["#D4A373","#CCD5AE","#E9EDC9","#FAEDCD"]},
+  {n:"Cyberpunk", c:["#FF2A6D","#05D9E8","#7700A6","#D1F7FF"]},
+  {n:"Neon Night", c:["#08F7FE","#09FBD3","#FE53BB","#F5D300"]},
+  {n:"Coffee", c:["#4B3621","#A67B5B","#C9A66B","#ECDCC9"]},
+  {n:"Nordic", c:["#2E3440","#4C566A","#88C0D0","#ECEFF4"]},
+  {n:"Royal Purple", c:["#240046","#5A189A","#9D4EDD","#E0AAFF"]},
+  {n:"Berry", c:["#590D22","#A4133C","#FF4D6D","#FFB3C1"]},
+  {n:"Mint Fresh", c:["#064E3B","#10B981","#6EE7B7","#D1FAE5"]},
+  {n:"Sand & Sea", c:["#3D5A80","#98C1D9","#E0FBFC","#EE6C4D"]},
+  {n:"Fire", c:["#03071E","#9D0208","#DC2F02","#FFBA08"]},
+  {n:"Earth Tones", c:["#582F0E","#7F4F24","#A68A64","#C2C5AA"]},
+  {n:"Cherry Blossom", c:["#FFC8DD","#FFAFCC","#BDE0FE","#A2D2FF"]},
+  {n:"Emerald", c:["#004B23","#007200","#38B000","#9EF01A"]},
+  {n:"Rose Gold", c:["#B76E79","#EACDC2","#D4A5A5","#FFE0E0"]},
+  {n:"Deep Sea", c:["#03045E","#0077B6","#00B4D8","#90E0EF"]},
+  {n:"Sunflower", c:["#463F1A","#8A6D03","#DDB614","#FFE45E"]},
+  {n:"Plum Wine", c:["#2B0A3D","#5C0A5C","#8E1C5E","#C9456B"]},
+  {n:"Slate", c:["#1B263B","#415A77","#778DA9","#E0E1DD"]},
+  {n:"Tropical", c:["#FF6B35","#F7C59F","#004E89","#1A659E"]},
+  {n:"Grape Soda", c:["#390099","#9E0059","#FF0054","#FF5400"]},
+  {n:"Olive Grove", c:["#283618","#606C38","#DDA15E","#BC6C25"]},
+  {n:"Ice", c:["#CAF0F8","#90E0EF","#48CAE4","#0096C7"]},
+  {n:"Crimson", c:["#250902","#641220","#A4161A","#E5383B"]},
+  {n:"Matcha", c:["#344E41","#3A5A40","#588157","#A3B18A"]},
+  {n:"Bubblegum", c:["#F72585","#B5179E","#7209B7","#560BAD"]},
+  {n:"Peach", c:["#FFCDB2","#FFB4A2","#E5989B","#B5838D"]},
+  {n:"Steel Teal", c:["#006D77","#83C5BE","#EDF6F9","#FFDDD2"]},
+  {n:"Mustard Field", c:["#283618","#BC6C25","#DDA15E","#FEFAE0"]},
+  {n:"Charcoal & Cream", c:["#2B2B2B","#5E5A55","#9A9087","#C9BFB2","#F0EAE0"]},
+  {n:"Warm Taupe", c:["#3D362E","#6B5D4F","#9C8A76","#C4B5A0","#E8DECE"]},
+  {n:"Cool Slate Grey", c:["#20262B","#414B54","#6E7B86","#9FAAB3","#D7DDE1"]},
+  {n:"Espresso Cream", c:["#1F1610","#4A3729","#7A5C44","#B08E6E","#E3D2BC"]},
+  {n:"Sage & Stone", c:["#3A4035","#5E6552","#8B917A","#B5B9A6","#E0E2D6"]},
+  {n:"Mushroom Greige", c:["#34302B","#5E574E","#8E8475","#BBB1A1","#E4DDD0"]},
+  {n:"Pewter Blue", c:["#1B1F24","#39424B","#69757F","#9CA7AF","#D2D8DC"]},
+  {n:"Clay & Sand", c:["#4A2F25","#7A5240","#A87B5E","#CBA886","#EBD9BE"]},
+  {n:"Ink Wash", c:["#121316","#33363B","#646A71","#9AA0A6","#D6DADD"]},
+  {n:"Olive Neutral", c:["#2E2F22","#54573D","#82875E","#AEB291","#DDDFC9"]},
+  {n:"Dusty Rose Neutral", c:["#2B2422","#574741","#8A7470","#B8A39E","#E2D4D0"]},
+  {n:"Driftwood Grey", c:["#2F2C29","#56514A","#857E72","#B4ACA0","#E1DACE"]},
+  {n:"Graphite & Bone", c:["#17191A","#3D4144","#6E7478","#A6ABAE","#EDEAE3"]}
+];
+
+const SCHEME={
+  mono:        {offs:[0]},
+  analogous:   {offs:[-30,0,30,-15,15]},
+  complementary:{offs:[0,180]},
+  split:       {offs:[0,150,210]},
+  triadic:     {offs:[0,120,240]},
+  tetradic:    {offs:[0,90,180,270]},
+  warm:        {pick:[0,15,30,45,8]},
+  cool:        {pick:[185,205,225,260,240]},
+  earth:       {pick:[18,28,35,90,45], sat:-0.12, val:-0.04},
+  regal:       {pick:[270,285,300,350,45], sat:0.12, val:-0.08},
+  elegant:     {pick:[220,235,330,200,210], sat:-0.18},
+  pastel:      {offs:[0,40,-40,80,20], sat:-0.35, val:0.18},
+  neon:        {offs:[0,120,240,300,180], sat:0.42, val:0.10},
+  random:      {}
+};
+function schemeHues(scheme, baseH, n, balance){
+  const cfg=SCHEME[scheme]||SCHEME.analogous;
+  const hues=[];
+  if(scheme==="random"){ for(let k=0;k<n;k++) hues.push(Math.random()*360); return hues; }
+  if(cfg.pick){
+    for(let k=0;k<n;k++){ const base=cfg.pick[k%cfg.pick.length]; const jitter=(1-balance)*(Math.random()*30-15); hues.push(base+jitter); }
+    return hues;
+  }
+  const offs=cfg.offs;
+  for(let k=0;k<n;k++){
+    const base=offs[k%offs.length];
+    const jitter=(1-balance)*(Math.random()*40-20);
+    hues.push(baseH+base+jitter + Math.floor(k/offs.length)*((1-balance)*25));
+  }
+  return hues;
+}
+/* Color-balance roles: bigger areas become the dominant colour, mid areas a
+   neighbouring hue, small areas a complementary accent (v6-style 60/30/10…). */
+function assignBalanceRoles(n, balance){
+  if(balance==="free") return new Array(n).fill("dominant");
+  const r={"60-30-10":[0.6,0.3],"70-20-10":[0.7,0.2],"50-30-20":[0.5,0.3],"50-50":[0.5,0.5]}[balance]||[0.6,0.3];
+  const nDom=Math.max(1,Math.round(n*r[0])), nSec=Math.max(0,Math.round(n*r[1]));
+  const out=new Array(n).fill("accent");
+  for(let i=0;i<n;i++){ if(i<nDom) out[i]="dominant"; else if(i<nDom+nSec) out[i]="secondary"; }
+  return out;
+}
+function roleHue(role, bh){
+  const pm=d=>(Math.random()*2-1)*d;
+  if(role==="dominant")  return bh+pm(8);
+  if(role==="secondary") return bh+(Math.random()<0.5?30:-30)+pm(12);
+  return bh+180+pm(15);   // accent = complementary
+}
+/* The distinct hue families a scheme is built from (so Color balance can
+   distribute the scheme's real colours across areas, not just the base hue). */
+function schemeFamilies(scheme, bh){
+  const cfg=SCHEME[scheme]||{};
+  if(scheme==="random") return [bh,bh+60,bh+120,bh+180,bh+240,bh+300];
+  if(cfg.pick) return cfg.pick.slice();
+  if(cfg.offs) return cfg.offs.map(o=>bh+o);
+  return [bh];
+}
+/* Assign a scheme family to each area, re-shuffled every roll so the same
+   colour doesn't always land on the same area. Keeps the scheme's palette,
+   varies the distribution. Base hue stays dominant for base-anchored schemes. */
+/* famPairs: [{h, s}] (s may be null = derive from sliders). anchorBase keeps
+   pair[0] on the biggest area (for base-anchored colour-theory schemes). */
+function buildAreaHues(famPairs, anchorBase, n, balMode, spread){
+  if(n<=0) return [];
+  const fams=famPairs.slice();
+  const shuffle=arr=>{ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+  const jit=()=> (1-spread)*(Math.random()*2-1)*22;
+  const J=(f,d)=>({h:f.h+(Math.random()*2-1)*d, s:f.s});
+  if(balMode==="free" || fams.length<=1){
+    const order = anchorBase ? [fams[0], ...shuffle(fams.slice(1))] : shuffle(fams);
+    return Array.from({length:n}, (_,i)=>{ const f=order[i%order.length]; return {h:f.h+jit(), s:f.s}; });
+  }
+  const roles=assignBalanceRoles(n, balMode);
+  const domFam = anchorBase ? fams[0] : fams[Math.floor(Math.random()*fams.length)];
+  const restPool=(()=>{ const r=shuffle(fams.filter(f=>f!==domFam)); return r.length?r:[domFam]; })();
+  let si=0;
+  return roles.map(role=>{
+    if(role==="dominant") return J(domFam,8);
+    const f=restPool[si%restPool.length]; si++; return J(f,12);
+  });
+}
+/* Resolve the active hue families: curated palette if one is picked, else the
+   colour-theory / mood scheme. Returns {pairs:[{h,s}], anchorBase}. */
+function activeFamilies(bh){
+  if(S.curated){ return {pairs:S.curated.c.map(hx=>{ const [h,s]=rgb2hsl(...hex2rgb(hx)); return {h,s}; }), anchorBase:false}; }
+  const scheme=$("#genScheme").value, cfg=SCHEME[scheme]||{};
+  return {pairs:schemeFamilies(scheme,bh).map(h=>({h,s:null})), anchorBase:!!cfg.offs};
+}
+function genPalette(intoPal, vary){
+  vary=vary||0;
+  const pal=intoPal||new Uint8Array(S.workPal);
+  const scheme=$("#genScheme").value;
+  const cfg=SCHEME[scheme]||{};
+  const spread=+$("#genBalance").value/100;
+  const balMode=$("#genBalanceMode")?.value||"free";
+  const baseHex = $("#genRandomBase").checked ? rgb2hex(...hsl2rgb(Math.random()*360,0.6,0.5).map(clamp8)) : $("#genBase").value;
+  let [bh,bs,bl]=rgb2hsl(...hex2rgb(baseHex));
+  const respect=$("#genRespect").checked && S.areas.length;
+  const mods={ s:+$("#genSat").value/100, b:+$("#genBri").value/100, c:+$("#genCon").value/100 };
+  const schemeSat=cfg.sat||0, schemeVal=cfg.val||0;
+  // For colour-theory schemes (no curated per-family saturation), the BASE COLOUR's own
+  // saturation and lightness drive the result, so brown stays brown and near-white/black
+  // produce light/dark neutral palettes instead of a vivid hue.
+  const baseLBias = (bl-0.5)*0.55;
+
+  let groups;
+  if(respect){
+    const areas=S.areas.filter(a=>!a.locked).slice().sort((a,b)=>(b.used||b.indices.length)-(a.used||a.indices.length));
+    groups=areas.map(a=>a.indices.filter(i=>!S.locked.has(i)&&!isMagenta(pal,i)&&i!==0));
+  } else groups=[ [...S.used].filter(i=>i!==0&&!isMagenta(pal,i)&&!S.locked.has(i)) ];
+  groups=groups.filter(g=>g.length);
+
+  let {pairs,anchorBase}=activeFamilies(bh);
+  let hues = buildAreaHues(pairs, anchorBase, groups.length, balMode, spread);
+  groups.forEach((g,gi)=>{
+    const fam=hues[gi];
+    const targetH=fam.h + (vary>0?(Math.random()*2-1)*vary*40:0);
+    const sVary = vary>0?(Math.random()*2-1)*vary*0.30:0;
+    const lVary = vary>0?(Math.random()*2-1)*vary*0.10:0;
+    const baseS = (fam.s!=null) ? fam.s : bs;     // colour-theory: use the base colour's saturation
+    const targetS=Math.max(0,Math.min(1, baseS*(1+mods.s) + (fam.s!=null?0:schemeSat) + sVary));
+    const lBias = (fam.s!=null) ? 0 : baseLBias;  // colour-theory: shift toward the base colour's lightness
+    const monoShade = (!S.curated && scheme==="mono");
+    for(const i of g){
+      const [r,gg,b]=getRGB(pal,i);
+      let [,,l]=rgb2hsl(r,gg,b);
+      l=0.5+(l-0.5)*(1+mods.c);
+      l=Math.max(0,Math.min(1,l+mods.b+schemeVal+lVary+lBias));
+      const [nr,ng,nb]=hsl2rgb(targetH, monoShade?targetS*(0.6+l*0.6):targetS, l);
+      setRGB(pal,i,nr,ng,nb);
+    }
+  });
+  return pal;
+}
+/* baked palette, but with the currently-shown colours kept at locked indices,
+   so locking protects what you see (not the original baked tone). */
+function lockedBase(){
+  const b=new Uint8Array(S.bakedPal);
+  if(S.locked&&S.workPal) for(const i of S.locked){ const c=getRGB(S.workPal,i); setRGB(b,i,c[0],c[1],c[2]); }
+  return b;
+}
+function genRoll(){
+  S.workPal=genPalette(lockedBase());
+  setSrc("custom");
+  renderSchemePrev(); if(S.mounts&&S.mounts.length) renderMounts();
+}
+function genApply(){ genRoll(); toast("Palette generated","ok"); }
+
+/* ===== HSV colour picker (2D field + hue strip + HSB/RGB/hex), shared popover ===== */
+function rgb2hsv(r,g,b){ r/=255;g/=255;b/=255; const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn; let h=0; if(d){ if(mx===r)h=((g-b)/d)%6; else if(mx===g)h=(b-r)/d+2; else h=(r-g)/d+4; h*=60; if(h<0)h+=360; } return [h, mx?d/mx:0, mx]; }
+function hsv2rgb(h,s,v){ h=((h%360)+360)%360; const c=v*s, x=c*(1-Math.abs((h/60)%2-1)), m=v-c; let r,g,b; if(h<60)[r,g,b]=[c,x,0]; else if(h<120)[r,g,b]=[x,c,0]; else if(h<180)[r,g,b]=[0,c,x]; else if(h<240)[r,g,b]=[0,x,c]; else if(h<300)[r,g,b]=[x,0,c]; else [r,g,b]=[c,0,x]; return [Math.round((r+m)*255),Math.round((g+m)*255),Math.round((b+m)*255)]; }
+const CP={h:0,s:1,v:1,cb:null};
+function cpHex(){ const [r,g,b]=hsv2rgb(CP.h,CP.s,CP.v); return rgb2hex(r,g,b); }
+function cpRender(){
+  const sv=$("#cpSV"); if(!sv) return;
+  sv.style.background=`linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,hsl(${CP.h.toFixed(0)},100%,50%))`;
+  $("#cpSVc").style.left=(CP.s*100)+"%"; $("#cpSVc").style.top=((1-CP.v)*100)+"%";
+  $("#cpHueC").style.top=((CP.h/360)*100)+"%";
+  const hex=cpHex(); const [r,g,b]=hsv2rgb(CP.h,CP.s,CP.v);
+  $("#cpPrev").style.background=hex;
+  const set=(id,val)=>{ const e=$(id); if(e&&document.activeElement!==e) e.value=val; };
+  set("#cpHex",hex); set("#cpH",Math.round(CP.h)); set("#cpS",Math.round(CP.s*100)); set("#cpV",Math.round(CP.v*100));
+  set("#cpR",r); set("#cpG",g); set("#cpB",b);
+}
+function cpCommit(){ if(CP.cb) CP.cb(cpHex()); }
+function openColorPicker(anchorEl, hex, cb){
+  const [r,g,b]=hex2rgb(hex||"#ffffff"); const hsv=rgb2hsv(r,g,b); CP.h=hsv[0];CP.s=hsv[1];CP.v=hsv[2];CP.cb=cb;
+  const pop=$("#cpop"); if(!pop) return; pop.hidden=false; pop.style.left="0px"; pop.style.top="0px";
+  const rect=anchorEl.getBoundingClientRect(); const pw=pop.offsetWidth||240, ph=pop.offsetHeight||280;
+  let left=rect.left+window.scrollX, top=rect.bottom+6+window.scrollY;
+  if(left+pw>window.scrollX+window.innerWidth-8) left=window.scrollX+window.innerWidth-pw-8;
+  if(top+ph>window.scrollY+window.innerHeight-8) top=rect.top+window.scrollY-ph-6;
+  pop.style.left=Math.max(8,left)+"px"; pop.style.top=Math.max(8,top)+"px";
+  cpRender();
+}
+function closeColorPicker(){ const pop=$("#cpop"); if(pop) pop.hidden=true; CP.cb=null; }
+function cpInit(){
+  const sv=$("#cpSV"), hue=$("#cpHue"); if(!sv) return;
+  const svMove=ev=>{ const r=sv.getBoundingClientRect(); CP.s=Math.max(0,Math.min(1,(ev.clientX-r.left)/r.width)); CP.v=Math.max(0,Math.min(1,1-(ev.clientY-r.top)/r.height)); cpRender(); cpCommit(); };
+  const hueMove=ev=>{ const r=hue.getBoundingClientRect(); CP.h=Math.max(0,Math.min(359.9,((ev.clientY-r.top)/r.height)*360)); cpRender(); cpCommit(); };
+  const drag=(el,mv)=>{ el.addEventListener("pointerdown",e=>{ e.preventDefault(); try{el.setPointerCapture(e.pointerId);}catch(_){} mv(e); const mvh=ev=>mv(ev); const up=ev=>{ try{el.releasePointerCapture(e.pointerId);}catch(_){} el.removeEventListener("pointermove",mvh); el.removeEventListener("pointerup",up); }; el.addEventListener("pointermove",mvh); el.addEventListener("pointerup",up); }); };
+  drag(sv,svMove); drag(hue,hueMove);
+  $("#cpHex").addEventListener("input",e=>{ let v=e.target.value.trim(); if(/^#?[0-9a-fA-F]{6}$/.test(v)){ if(v[0]!=="#")v="#"+v; const [r,g,b]=hex2rgb(v); const hsv=rgb2hsv(r,g,b); CP.h=hsv[0];CP.s=hsv[1];CP.v=hsv[2]; cpRender(); cpCommit(); } });
+  const hsvIn=()=>{ CP.h=Math.max(0,Math.min(360,+$("#cpH").value||0)); CP.s=Math.max(0,Math.min(100,+$("#cpS").value||0))/100; CP.v=Math.max(0,Math.min(100,+$("#cpV").value||0))/100; cpRender(); cpCommit(); };
+  ["#cpH","#cpS","#cpV"].forEach(id=>$(id)&&$(id).addEventListener("input",hsvIn));
+  const rgbIn=()=>{ const r=Math.max(0,Math.min(255,+$("#cpR").value||0)),g=Math.max(0,Math.min(255,+$("#cpG").value||0)),b=Math.max(0,Math.min(255,+$("#cpB").value||0)); const hsv=rgb2hsv(r,g,b); CP.h=hsv[0];CP.s=hsv[1];CP.v=hsv[2]; cpRender(); cpCommit(); };
+  ["#cpR","#cpG","#cpB"].forEach(id=>$(id)&&$(id).addEventListener("input",rgbIn));
+  document.addEventListener("pointerdown",e=>{ const pop=$("#cpop"); if(pop&&!pop.hidden && !pop.contains(e.target) && !e.target.closest(".swatch-pick")) closeColorPicker(); }, true);
+}
+function bindSwatch(swId, valId, after){
+  const sw=$(swId), val=$(valId); if(!sw||!val) return;
+  sw.style.background=val.value;
+  sw.addEventListener("click",e=>{ e.stopPropagation(); openColorPicker(sw, val.value, hex=>{ val.value=hex; sw.style.background=hex; if(after) after(hex); }); });
+}
+function renderSchemePrev(){
+  const prev=$("#schemePrev"); prev.innerHTML="";
+  if(S.curated){
+    S.curated.c.forEach(hx=>{ const i=document.createElement("i"); i.style.background=hx; prev.appendChild(i); });
+    return;
+  }
+  const scheme=$("#genScheme").value; const balance=+$("#genBalance").value/100;
+  let [bh]=rgb2hsl(...hex2rgb($("#genBase").value));
+  const hues=schemeHues(scheme,bh,6,balance);
+  hues.forEach(h=>{ const i=document.createElement("i"); const [r,g,b]=hsl2rgb(h,0.6,0.5); i.style.background=`rgb(${clamp8(r)},${clamp8(g)},${clamp8(b)})`; prev.appendChild(i); });
+}
+function parseColorHunt(input){
+  input=(input||"").trim(); let run="";
+  const m=input.match(/colorhunt\.co\/palette\/([0-9a-fA-F]+)/i);
+  if(m) run=m[1];
+  else if(/^https?:/i.test(input)){ const mm=input.match(/palette\/([0-9a-fA-F]+)/i); run=mm?mm[1]:""; }
+  else run=input.replace(/[^0-9a-fA-F]/g,"");   // raw hex list / comma-separated
+  run=(run||"").toLowerCase();
+  if(run.length<6 || run.length%6!==0) return null;
+  const cols=[]; for(let i=0;i<run.length && cols.length<8;i+=6) cols.push("#"+run.slice(i,i+6));
+  return cols.length?cols:null;
+}
+function customPalettes(){ if(!S.customPal){ S.customPal=[]; try{ const j=JSON.parse(localStorage.getItem("pf_curated")||"null"); if(Array.isArray(j)) S.customPal=j.filter(p=>p&&Array.isArray(p.c)); }catch(_){} } return S.customPal; }
+function persistCustomPalettes(){ try{ localStorage.setItem("pf_curated", JSON.stringify(customPalettes())); }catch(_){} }
+function addCustomPalette(){
+  const inp=$("#chUrl"); const cols=parseColorHunt(inp&&inp.value);
+  if(!cols){ toast("Couldn't read colours — paste a ColorHunt link or hex codes","err"); return; }
+  const list=customPalettes(); const n="Custom "+(list.length+1);
+  const p={n, c:cols, custom:true}; list.push(p); persistCustomPalettes();
+  if(inp) inp.value="";
+  S.curated=p; renderCurated(); renderSchemePrev();
+  toast(`Added "${n}" — ${cols.length} colours`,"ok");
+}
+function removeCustomPalette(p){
+  const list=customPalettes(); const i=list.indexOf(p); if(i<0) return;
+  list.splice(i,1); persistCustomPalettes();
+  if(S.curated===p) S.curated=null;
+  renderCurated(); renderSchemePrev();
+}
+function renderCurated(){
+  const wrap=$("#curatedLib"); if(!wrap) return; wrap.innerHTML="";
+  const none=document.createElement("div"); none.className="cchip none"+(S.curated?"":" on"); none.textContent="Color theory (off)";
+  none.onclick=()=>{ S.curated=null; renderCurated(); renderSchemePrev(); };
+  wrap.appendChild(none);
+  const mkChip=(p,removable)=>{
+    const chip=document.createElement("div"); chip.className="cchip"+(S.curated&&S.curated.n===p.n?" on":""); chip.title=p.n;
+    const bar=document.createElement("div"); bar.className="cbar";
+    p.c.forEach(hx=>{ const i=document.createElement("i"); i.style.background=hx; bar.appendChild(i); });
+    const nm=document.createElement("span"); nm.className="cname"; nm.textContent=p.n;
+    chip.appendChild(bar); chip.appendChild(nm);
+    if(removable){ const x=document.createElement("span"); x.className="cdel"; x.textContent="✕"; x.title="Remove custom palette"; x.onclick=e=>{ e.stopPropagation(); removeCustomPalette(p); }; chip.appendChild(x); }
+    chip.onclick=()=>{ S.curated=p; renderCurated(); renderSchemePrev(); };
+    wrap.appendChild(chip);
+  };
+  CURATED.forEach(p=>mkChip(p,false));
+  customPalettes().forEach(p=>mkChip(p,true));
+}
+
+/* ============================================================
+   Remap — baked-in <-> custom color map
+   ============================================================ */
+function colorDist(a,b){ const dr=a[0]-b[0],dg=a[1]-b[1],db=a[2]-b[2]; return dr*dr+dg*dg+db*db; }
+function buildMap(){
+  if(!S.bakedPal||!S.loadedCustom){ toast("Need a sprite (baked) + an opened custom .pal","err"); return {exact:0,near:0}; }
+  const map=[]; let exact=0,near=0;
+  const usedCustom=new Set();
+  const srcIdx=[];
+  for(let i=1;i<256;i++){ if(isMagenta(S.bakedPal,i)) continue; if(S.used&&S.used.size&&!S.used.has(i)) continue; srcIdx.push(i); }
+  // pass 1: exact colour matches → unique custom slot
+  const pending=[];
+  for(const i of srcIdx){
+    const bc=getRGB(S.bakedPal,i); let found=-1;
+    for(let j=0;j<256;j++){ if(usedCustom.has(j))continue; const cc=getRGB(S.loadedCustom,j);
+      if(cc[0]===bc[0]&&cc[1]===bc[1]&&cc[2]===bc[2]){ found=j; break; } }
+    if(found>=0){ usedCustom.add(found); map.push({from:i,to:found,exact:true}); exact++; }
+    else pending.push(i);
+  }
+  // pass 2: nearest colour among remaining slots
+  for(const i of pending){
+    const bc=getRGB(S.bakedPal,i); let best=-1,bd=1e9;
+    for(let j=0;j<256;j++){ if(usedCustom.has(j))continue; const d=colorDist(bc,getRGB(S.loadedCustom,j)); if(d<bd){bd=d;best=j;} }
+    if(best>=0) usedCustom.add(best); else best=0;
+    map.push({from:i,to:best,exact:false,dist:Math.sqrt(bd)}); near++;
+  }
+  map.sort((a,b)=>a.from-b.from);
+  S.map=map;
+  if($("#mapExact")) $("#mapExact").textContent=exact;
+  if($("#mapNear")) $("#mapNear").textContent=near;
+  renderMapList();
+  return {exact,near};
+}
+function renderMapList(){
+  const list=$("#mapList"); list.innerHTML=""; if(!S.map) return;
+  for(const m of S.map){
+    if(!S.used.has(m.from)&&m.from!==0) continue;
+    const bc=getRGB(S.bakedPal,m.from), cc=getRGB(S.loadedCustom,m.to);
+    const row=document.createElement("div"); row.className="maprow";
+    row.innerHTML=`<span class="ix">${m.from}</span>
+      <div class="mapsw" style="background:rgb(${bc[0]},${bc[1]},${bc[2]})">${rgb2hex(...bc).slice(1)}</div>
+      <span class="maparrow">${m.exact?"=":"≈"}</span>
+      <div class="mapsw" style="background:rgb(${cc[0]},${cc[1]},${cc[2]})">${m.to}</div>`;
+    list.appendChild(row);
+  }
+}
+/* Remap a baked-structure palette into the loaded custom (in-game) structure. */
+function remapToExport(workLike){
+  const target=($("#expStruct")?.value)||($("#mapTarget")?.value)||"baked";
+  if(target!=="custom" || !S.map || !S.loadedCustom) return workLike;
+  const res=new Uint8Array(S.loadedCustom);              // custom structure is the backbone
+  for(const m of S.map){ const c=getRGB(workLike,m.from); setRGB(res,m.to,...c); }
+  return res;
+}
+function palForExport(){ return remapToExport(S.workPal); }
+
+/* ============================================================
+   Export — single + batch zip
+   ============================================================ */
+function genderSuffix(){ return S.gender==="female"?"_¿©":"_³²"; }
+function genderFromName(n){ if(/_¿©/.test(n)) return "female"; if(/_³²/.test(n)) return "male"; return null; }
+function setGender(g){ if(g!=="male"&&g!=="female") return; S.gender=g; $$("#genderToggle button").forEach(x=>x.classList.toggle("on", x.dataset.g===g)); updateNamePreview(); }
+/* Base name + any aliases the character is also called in the GRF (deduped). */
+function charBaseNames(){
+  const base=$("#expBase").value||"sprite";
+  const aliases=($("#expAlias")?.value||"").split(/[,\n]+/).map(s=>s.trim()).filter(Boolean);
+  const out=[base,...aliases], seen=new Set();
+  return out.filter(n=>{ if(seen.has(n)) return false; seen.add(n); return true; });
+}
+/* Costume palettes carry an extra body-style suffix after the number (e.g. _0_1).
+   Off by default; when the Costume box is ticked, appends _<n> (n defaults to 1). */
+function costumeSuffix(){ if(!$("#expCostume")?.checked) return ""; const v=($("#expCostumeSuffix")?.value||"1").trim(); return v?("_"+v):""; }
+function updateNamePreview(){
+  const names=charBaseNames();
+  const extra=names.length>1?`  (+${names.length-1} alias${names.length-1>1?"es":""})`:"";
+  $("#namePreview").textContent=`${names[0]}${genderSuffix()}_${$("#expNum").value}${costumeSuffix()}.pal${extra}`;
+}
+/* True if the name carries bytes a browser's download sanitizer would mangle. */
+function hasNonAscii(s){ for(let i=0;i<s.length;i++) if(s.charCodeAt(i)>127) return true; return false; }
+/* Browsers replace non-ASCII in the download attribute with "_". ZIP *entry*
+   names bypass that (we write raw bytes via strBytes), so the safe channel for
+   a Korean RO filename is to put it inside a ZIP and give the .zip itself a
+   plain-ASCII name. */
+function asciiZipName(base){ const a=base.replace(/[^\x20-\x7E]/g,"").replace(/[^a-zA-Z0-9._-]+/g,"_").replace(/^_+|_+$/g,""); return (a||"palettes")+"_palettes.zip"; }
+function download(bytes,name){
+  const blob=new Blob([bytes],{type:"application/octet-stream"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+}
+function exportSingle(){
+  if(!S.workPal){ toast("No palette","err"); return; }
+  const names=charBaseNames(); const num=$("#expNum").value;
+  const data=buildPalBytes(palForExport());
+  const files=names.map(b=>({name:`${b}${genderSuffix()}_${num}${costumeSuffix()}.pal`, data}));
+  if(files.length>1 || hasNonAscii(files[0].name)){
+    download(makeZip(files), asciiZipName(names[0]));
+    toast(`Saved ${files.length} file(s) inside ZIP — exact name(s) preserved`,"ok");
+  } else {
+    download(files[0].data, files[0].name);
+    toast("Saved "+files[0].name,"ok");
+  }
+}
+function exportBatch(){
+  if(!S.spr&&!S.workPal){ toast("Load something first","err"); return; }
+  const names=charBaseNames();
+  const start=+$("#batchStart").value, count=Math.min(500,+$("#batchCount").value);
+  const mode=$("#batchMode").value;
+  const vary=+($("#batchVary")?.value||0)/100;
+  const files=[];
+  let anchor=null;
+  for(let k=0;k<count;k++){
+    let pal;
+    if(mode==="gen"){
+      if(vary===0){ if(!anchor) anchor=remapToExport(genPalette(lockedBase(),0)); pal=anchor; }
+      else pal=remapToExport(genPalette(lockedBase(), k===0?0:vary));  // k0 = clean theme, rest vary
+    } else pal=palForExport();
+    const data=buildPalBytes(pal);
+    for(const b of names) files.push({name:`${b}${genderSuffix()}_${start+k}${costumeSuffix()}.pal`, data});
+  }
+  const zip=makeZip(files);
+  download(zip, asciiZipName(names[0]));   // .zip name stays ASCII; entries keep Korean bytes
+  toast(`Exported ${files.length} palette file(s)${names.length>1?` (×${names.length} names)`:""} — names preserved inside ZIP`,"ok");
+}
+
+/* ============================================================
+   Scheme library — save colour schemes, apply to any class
+   ============================================================ */
+function areaStats(pal, indices){
+  let x=0,y=0,ns=0,sumS=0,sumL=0,n=0;
+  for(const i of indices){ const [r,g,b]=getRGB(pal,i); const [h,s,l]=rgb2hsl(r,g,b);
+    sumL+=l; n++;
+    if(s>=0.15){ const rad=h*Math.PI/180; x+=Math.cos(rad); y+=Math.sin(rad); sumS+=s; ns++; } }
+  let h=0; if(!(x===0&&y===0)){ h=Math.atan2(y,x)*180/Math.PI; if(h<0)h+=360; }
+  return { h, s: ns?sumS/ns:0, l: n?sumL/n:0, grey: ns===0 };
+}
+function schemesInit(){ if(!S.schemes){ S.schemes=[]; try{ const s=localStorage.getItem("pf_schemes"); if(s) S.schemes=JSON.parse(s)||[]; }catch(_){} } if(!S.adjust){ S.adjust={sat:0,bri:0,con:0}; try{ const a=localStorage.getItem("pf_adjust"); if(a) S.adjust=JSON.parse(a)||S.adjust; }catch(_){} } }
+function adjustPersist(){ try{ localStorage.setItem("pf_adjust", JSON.stringify(S.adjust)); }catch(_){} }
+function schemesPersist(){ try{ localStorage.setItem("pf_schemes", JSON.stringify(S.schemes)); }catch(_){} }
+
+/* Capture the current palette's per-area colours as an abstract, class-independent scheme. */
+function currentRoles(){
+  if(!S.spr){ toast("Load a sprite first","err"); return null; }
+  if(!S.areas.length) autoDetectAreas($("#areaGran")?.value||"balanced");
+  const src=S.workPal||S.bakedPal;
+  const areas=S.areas.filter(a=>!a.locked).slice().sort((a,b)=>(b.used||0)-(a.used||0));
+  // Fit current lightness to baked lightness as L' = a*L + b (least squares), then store it as a
+  // contrast term (dc) + brightness term (dv) so re-applying reproduces darks/lights faithfully.
+  const fitLight=(indices)=>{
+    let n=0,sx=0,sy=0,sxx=0,sxy=0;
+    for(const i of indices){ if(i===0||isMagenta(S.bakedPal,i)) continue;
+      const lb=rgb2hsl(...getRGB(S.bakedPal,i))[2];
+      const lc=rgb2hsl(...getRGB(src,i))[2];
+      n++; sx+=lb; sy+=lc; sxx+=lb*lb; sxy+=lb*lc; }
+    if(n===0) return {dv:0,dc:0};
+    if(n===1) return {dv:+(sy-sx).toFixed(3), dc:0};
+    const denom=n*sxx-sx*sx;
+    let a = Math.abs(denom)>1e-6 ? (n*sxy-sx*sy)/denom : 1;
+    a=Math.max(0.2,Math.min(3,a));
+    const b=(sy-a*sx)/n;
+    return { dv:+(b-0.5+0.5*a).toFixed(3), dc:+(a-1).toFixed(3) };
+  };
+  const roles=areas.map(a=>{ const st=areaStats(src, a.indices); const f=fitLight(a.indices); return {h:+st.h.toFixed(1), s:+Math.max(0.12,st.s||0.45).toFixed(3), grey:st.grey, dv:f.dv, dc:f.dc}; });
+  if(!roles.length){ toast("No areas to capture","err"); return null; }
+  return roles;
+}
+function captureScheme(){
+  const roles=currentRoles(); if(!roles) return;
+  schemesInit(); S.schemes.push({roles}); S.activeScheme=S.schemes.length-1; schemesPersist(); renderSchemes();
+  toast(`Saved scheme #${S.schemes.length-1}`,"ok");
+}
+function updateScheme(idx){
+  schemesInit(); if(idx<0||idx>=S.schemes.length) return;
+  const roles=currentRoles(); if(!roles) return;
+  S.schemes[idx]={roles}; S.activeScheme=idx; schemesPersist(); renderSchemes();
+  toast(`Updated scheme #${idx}`,"ok");
+}
+/* Synthesize N schemes from the current Generate settings (no sprite needed). */
+function hueSep(a,b){ let d=Math.abs(a-b)%360; return d>180?360-d:d; }
+function rollSchemes(n){
+  schemesInit();
+  const balance=+$("#genBalance").value/100;
+  const balMode=$("#genBalanceMode")?.value||"free";
+  const satMod=+$("#genSat").value/100, briMod=+$("#genBri").value/100;
+  const randomBase=$("#genRandomBase")?.checked;
+  const spread=(+($("#schemeSpread")?.value||0))/100;
+  const variety=(+($("#schemeVariety")?.value||0))/100;   // tonal spread: muted/earthy/neutral/dark
+  const minSep=spread*0.9*(360/Math.max(1,n));
+  const usedHues=[];
+  const rj=(amp)=>(Math.random()*2-1)*amp;                // symmetric jitter
+  for(let k=0;k<n;k++){
+    let bh;
+    if(randomBase){
+      bh=Math.random()*360; let tries=0;
+      while(spread>0 && tries<60 && usedHues.some(h=>hueSep(h,bh)<minSep)){ bh=Math.random()*360; tries++; }
+    } else { bh=rgb2hsl(...hex2rgb($("#genBase").value))[0]; }
+    usedHues.push(bh);
+    // per-scheme tone: vary overall saturation & lightness so rolls range from vivid to muted/earthy/dark
+    const schemeSat=0.6+satMod+rj(0.42*variety);
+    const schemeDv=briMod+rj(0.22*variety);
+    const {pairs,anchorBase}=activeFamilies(bh);
+    const ah=buildAreaHues(pairs, anchorBase, 6, balMode, balance);
+    const roles=ah.map(f=>{
+      let s, grey=false;
+      if(f.s!=null){ s=f.s; }                              // family-specified saturation kept as-is
+      else {
+        s=schemeSat+rj(0.34*variety);                      // per-area saturation jitter -> browns/muted
+        if(variety>0 && Math.random()<0.14*variety) grey=true;   // occasional neutral -> greys/blacks/whites
+      }
+      s=Math.max(0.05,Math.min(1,s));
+      const dv=+(schemeDv+rj(0.1*variety)).toFixed(3);     // per-area lightness -> darks/lights, dark greens
+      return { h:+(((f.h%360)+360)%360).toFixed(1), s:+s.toFixed(3), grey, dv };
+    });
+    S.schemes.push({roles});
+  }
+  schemesPersist(); renderSchemes();
+  toast(`Rolled ${n} scheme(s)`,"ok");
+}
+/* Apply a scheme's role colours to a class's areas (by order, cycling), tone-preserving. */
+function applySchemeToPal(sc, basePal){
+  const pal=new Uint8Array(basePal||S.bakedPal);
+  const areas=S.areas.filter(a=>!a.locked).slice().sort((a,b)=>(b.used||0)-(a.used||0));
+  let ri=0;
+  for(const a of areas){
+    const role=sc.roles[ri % sc.roles.length]; ri++;
+    if(!role) continue;
+    for(const i of a.indices){ if(i===0||isMagenta(pal,i)||S.locked.has(i)) continue;
+      let [r,g,b]=getRGB(pal,i); let [,,l]=rgb2hsl(r,g,b);
+      l=Math.max(0,Math.min(1, 0.5+(l-0.5)*(1+(role.dc||0))+(role.dv||0) ));
+      [r,g,b]= role.grey ? hsl2rgb(0,0,l) : hsl2rgb(role.h, role.s, l);
+      setRGB(pal,i,r,g,b); }
+  }
+  return pal;
+}
+function applyScheme(idx){
+  if(!S.spr){ toast("Load a class sprite first","err"); return; }
+  if(!S.areas.length) autoDetectAreas($("#areaGran")?.value||"balanced");
+  S.workPal=adjustPal(applySchemeToPal(S.schemes[idx], lockedBase())); setSrc("custom"); S.activeScheme=idx; renderAll(); renderSchemes(); if(S.mounts&&S.mounts.length) renderMounts();
+  toast(`Applied scheme #${idx}`,"ok");
+}
+function deleteScheme(idx){ S.schemes.splice(idx,1); if(S.activeScheme===idx) S.activeScheme=-1; else if(S.activeScheme>idx) S.activeScheme--; schemesPersist(); renderSchemes(); }
+function renderSchemes(){
+  schemesInit();
+  const wrap=$("#schemeLib"); if(!wrap) return; wrap.innerHTML="";
+  if($("#schemeCount")) $("#schemeCount").textContent=S.schemes.length;
+  if(!S.schemes.length){ wrap.innerHTML='<div class="note">No saved schemes yet. Generate a look and \u201cSave current\u201d, or \u201cRoll\u201d a batch.</div>'; return; }
+  S.schemes.forEach((sc,idx)=>{
+    const chip=document.createElement("div"); chip.className="schip"+(idx===S.activeScheme?" active":""); chip.title=`Apply scheme #${idx}`;
+    const num=document.createElement("span"); num.className="snum"; num.textContent="_"+idx;
+    const bar=document.createElement("div"); bar.className="sbar";
+    sc.roles.forEach(r=>{ const i=document.createElement("i"); const [cr,cg,cb]=r.grey?hsl2rgb(0,0,0.6):hsl2rgb(r.h,r.s,0.5); i.style.background=`rgb(${clamp8(cr)},${clamp8(cg)},${clamp8(cb)})`; bar.appendChild(i); });
+    const upd=document.createElement("button"); upd.className="supd"; upd.textContent="\u270e"; upd.title=`Overwrite scheme #${idx} with the current canvas edits`; upd.onclick=(e)=>{ e.stopPropagation(); updateScheme(idx); };
+    const rm=document.createElement("button"); rm.className="srm"; rm.textContent="\u2715"; rm.onclick=(e)=>{ e.stopPropagation(); deleteScheme(idx); };
+    chip.appendChild(num); chip.appendChild(bar); chip.appendChild(upd); chip.appendChild(rm);
+    chip.onclick=()=>applyScheme(idx);
+    wrap.appendChild(chip);
+  });
+}
+function exportSchemesJson(){ download(new TextEncoder().encode(JSON.stringify(S.schemes||[])), "palette_forge_schemes.json"); }
+function importSchemesJson(file){ const fr=new FileReader(); fr.onload=()=>{ try{ const arr=JSON.parse(fr.result); if(Array.isArray(arr)){ schemesInit(); S.schemes=arr; S.activeScheme=-1; schemesPersist(); renderSchemes(); toast(`Imported ${arr.length} scheme(s)`,"ok"); } else toast("Bad JSON","err"); }catch(e){ toast("Bad JSON","err"); } }; fr.readAsText(file); }
+function adjustPal(pal, keep){
+  const a=S.adjust||{sat:0,bri:0,con:0};
+  if(!a.sat && !a.bri && !a.con) return pal;        // neutral → untouched
+  const locked=S.locked||new Set();
+  const satF=1+a.sat/100, conF=1+a.con/100, briD=a.bri/100;
+  const out=new Uint8Array(pal);
+  for(let i=0;i<256;i++){
+    if(i===0||isMagenta(pal,i)||locked.has(i)||(keep&&keep.has(i))) continue;   // markers + locked areas untouched
+    let [r,g,b]=getRGB(pal,i); let [h,s,l]=rgb2hsl(r,g,b);
+    s=Math.max(0,Math.min(1,s*satF));
+    l=Math.max(0,Math.min(1,(l-0.5)*conF+0.5+briD));
+    const [nr,ng,nb]=hsl2rgb(h,s,l); setRGB(out,i,nr,ng,nb);
+  }
+  return out;
+}
+function exportSchemesZip(){
+  schemesInit();
+  if(!S.schemes.length){ toast("No schemes to export","err"); return; }
+  if(!S.spr){ toast("Load a class sprite to bake palettes","err"); return; }
+  if(!S.areas.length) autoDetectAreas($("#areaGran")?.value||"balanced");
+  const charNames=charBaseNames(); const start=+($("#schemeStart")?.value||0);
+  const incMount = $("#schemeMounts")?.checked && S.mounts && S.mounts.length;
+  const files=[];
+  S.schemes.forEach((sc,k)=>{
+    const baseRecolored=applySchemeToPal(sc, lockedBase());          // pure scheme result
+    const cdata=buildPalBytes(remapToExport(adjustPal(baseRecolored)));
+    for(const b of charNames) files.push({ name:`${b}${genderSuffix()}_${start+k}${costumeSuffix()}.pal`, data:cdata });
+    if(incMount) for(const mount of S.mounts){
+      const mlocked=new Set(); for(const ar of (mount.areas||[])) if(ar.locked) for(const i of ar.indices) mlocked.add(i);
+      const data=buildPalBytes(adjustPal(buildMountPal(mount, sc, baseRecolored), mlocked));  // rider consistent; locked mount areas untouched
+      const names=[mount.base, ...(mount.aliases||[])].map(s=>(s||"").trim()).filter(Boolean);
+      const seen=new Set();
+      for(const nm of names){ if(seen.has(nm)) continue; seen.add(nm); files.push({ name:`${nm}${genderSuffix()}_${start+k}${costumeSuffix()}.pal`, data }); }
+    }
+  });
+  download(makeZip(files), incMount?asciiZipName(charNames[0]).replace(/\.zip$/,"_with_mounts.zip"):"schemes_palettes.zip");
+  toast(`Exported ${files.length} palettes${incMount?` — base + ${S.mounts.length} mount set(s)`:""}`,"ok");
+}
+
+/* ============================================================
+   Macro — groups -> masters -> scheme sets -> full pack export
+   Group: ordered scheme sets ("colours") + masters. Runs in group order.
+   Master: a reusable shade+lock preset (Sat/Bri/Con + per-area treatments)
+           applied to a checkbox-selected subset of the group's sets.
+   Export order: group -> set(colour) -> master -> scheme, so every palette of
+   one colour stays contiguous (all reds, then all greens, ...). IDs run flat.
+   ============================================================ */
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+const TREAT=[["free","Free"],["lock","Lock"],["black","Black"],["white","White"],["desat","Desat"]];
+function normMaster(x){ return {name:x.name||"Master", sat:+x.sat||0, bri:+x.bri||0, con:+x.con||0, areas:x.areas||{}, mounts:x.mounts||{}, apply:x.apply||{}}; }
+function normalizeMacro(j){
+  const m={sets:j.sets||{}, groups:[], startId:j.startId||0, _legacy:(j.v!==2)};
+  if(Array.isArray(j.groups)) m.groups=j.groups.map(g=>({name:g.name||"Group", sets:Array.isArray(g.sets)?g.sets.slice():[], masters:(g.masters||[]).map(normMaster)}));
+  else if(Array.isArray(j.runs)) m.runs=j.runs;   // legacy, migrated in macroInit
+  return m;
+}
+/* Convert an old macro (locks keyed by area LIST POSITION) to the new stable
+   raw-slot anchor keys, using the CURRENTLY LOADED character + mounts as the
+   reference the plan was authored on. Safe to call repeatedly; no-op once done. */
+function migrateMacroKeys(){
+  if(!S.macro || !S.macro._legacy) return;
+  if(!S.spr || !S.areas || !S.areas.length) return;          // need the reference character
+  let maxMount=-1; S.macro.groups.forEach(g=>g.masters.forEach(m=>{ for(const mmi in (m.mounts||{})) maxMount=Math.max(maxMount,+mmi); }));
+  if(maxMount>=0 && (!S.mounts || S.mounts.length<=maxMount)) return;   // wait until every referenced mount is loaded
+  const charMap={}; S.areas.forEach((a,ai)=>{ charMap[ai]=areaAnchor(a); });
+  const mountMaps=(S.mounts||[]).map(mt=>{ const mm={}, rd=mt.rider||new Set(); (mt.areas||[]).forEach((a,ai)=>{ const ind=a.indices.filter(i=>i!==0&&!isMagenta(mt.baked,i)&&!rd.has(i)); mm[ai]= ind.length?Math.min.apply(null,ind):areaAnchor(a); }); return mm; });
+  let n=0;
+  S.macro.groups.forEach(g=>g.masters.forEach(m=>{
+    if(m.areas){ const na={}; for(const k in m.areas){ const anch=charMap[k]; na[anch!=null?anch:k]=m.areas[k]; if(anch!=null)n++; } m.areas=na; }
+    if(m.mounts){ const nm={}; for(const mmi in m.mounts){ const mm=mountMaps[mmi]||{}, inner={}; for(const k in m.mounts[mmi]){ const anch=mm[k]; inner[anch!=null?anch:k]=m.mounts[mmi][k]; if(anch!=null)n++; } nm[mmi]=inner; } m.mounts=nm; }
+  }));
+  S.macro._legacy=false; macroPersist();
+  if(typeof toast==="function") toast(`Converted ${n} lock(s) to the new stable raw-slot format`,"ok");
+}
+function macroInit(){
+  if(S.macroOpen===undefined) S.macroOpen=null;   // "gi:mi" of the open master area-editor
+  if(!S.macro){ S.macro={sets:{},groups:[],startId:0}; try{ const j=JSON.parse(localStorage.getItem("pf_macro")||"null"); if(j) S.macro=normalizeMacro(j); }catch(_){} }
+  if(!S.macro.sets) S.macro.sets={};
+  if(!S.macro.groups) S.macro.groups=[];
+  if(S.macro.runs && S.macro.runs.length && !S.macro.groups.length){   // migrate old flat runs
+    const g={name:"Imported runs", sets:[], masters:[]}; const seen=new Set();
+    S.macro.runs.forEach(r=>{ if(r.set){ if(!seen.has(r.set)){ seen.add(r.set); g.sets.push(r.set); } } g.masters.push({name:r.set||"run", sat:r.sat,bri:r.bri,con:r.con, areas:r.areas||{}, mounts:r.mounts||{}, apply:r.set?{[r.set]:true}:{}}); });
+    S.macro.groups=[g];
+  }
+  delete S.macro.runs;
+}
+function serializeMacro(){ return {v:2, sets:S.macro.sets, groups:S.macro.groups.map(g=>({name:g.name, sets:g.sets.slice(), masters:g.masters.map(m=>({name:m.name,sat:m.sat,bri:m.bri,con:m.con,areas:m.areas||{},mounts:m.mounts||{},apply:m.apply||{}}))})), startId:+($("#macroStart")?.value||S.macro.startId||0)}; }
+function macroPersist(){ macroInit(); try{ localStorage.setItem("pf_macro", JSON.stringify(serializeMacro())); }catch(_){} }
+/* Count / clear all "lock" treatments across every master (char + mount areas).
+   Locks are keyed by raw-slot anchor, which is per-sprite, so re-locking the same
+   area across different sprites accumulates entries — this lets you reset cleanly. */
+function countLocks(){ let n=0; if(!S.macro||!S.macro.groups) return 0;
+  for(const g of S.macro.groups) for(const m of (g.masters||[])){
+    for(const k in (m.areas||{})) if(m.areas[k]==="lock") n++;
+    for(const mmi in (m.mounts||{})) for(const k in (m.mounts[mmi]||{})) if(m.mounts[mmi][k]==="lock") n++;
+  } return n; }
+function updateLockCount(){ const el=$("#macroLockCount"); if(!el) return; const n=countLocks();
+  el.textContent = n ? `${n} lock(s) stored across all masters — anchors are per-sprite, so they pile up when you re-lock on new sprites.` : "No locks stored."; }
+/* Is this character-area anchor locked on EVERY master? */
+function areaLockedAllMasters(anchor){ let any=false; if(!S.macro||!S.macro.groups) return false;
+  for(const g of S.macro.groups) for(const m of (g.masters||[])){ any=true; if((m.areas||{})[String(anchor)]!=="lock" && (m.areas||{})[anchor]!=="lock") return false; }
+  return any; }
+/* Lock (or, if already fully locked, unlock) this area on every master at once —
+   so protecting a region like skin across a big macro is one click, not one per master. */
+function toggleAreaAllMasters(anchor){ macroInit(); const lockAll=!areaLockedAllMasters(anchor);
+  for(const g of S.macro.groups) for(const m of (g.masters||[])){ m.areas=m.areas||{}; if(lockAll) m.areas[anchor]="lock"; else if(m.areas[anchor]==="lock") delete m.areas[anchor]; }
+  macroPersist(); renderGroups(); updateLockCount();
+  toast(lockAll?`Locked this area on all ${countMasters()} master(s)`:"Cleared this area's lock on all masters","ok");
+}
+function countMasters(){ let n=0; if(S.macro&&S.macro.groups) for(const g of S.macro.groups) n+=(g.masters||[]).length; return n; }
+function unlockAllLocks(){ macroInit(); const n=countLocks();
+  if(!n){ toast("No locks to remove","ok"); updateLockCount(); return; }
+  if(!confirm(`Remove all ${n} lock(s) from every master?\n\nGroups, masters, Sat/Bri/Con, Apply-to and any Black/White/Desat treatments are kept — only "lock" is cleared.`)) return;
+  for(const g of S.macro.groups) for(const m of (g.masters||[])){
+    if(m.areas){ for(const k in m.areas) if(m.areas[k]==="lock") delete m.areas[k]; }
+    if(m.mounts){ for(const mmi in m.mounts){ for(const k in m.mounts[mmi]) if(m.mounts[mmi][k]==="lock") delete m.mounts[mmi][k]; } }
+  }
+  macroPersist(); renderGroups(); updateLockCount(); toast(`Removed ${n} lock(s) — masters kept`,"ok");
+}
+function macroSetNames(){ macroInit(); return Object.keys(S.macro.sets); }
+function renderMacroSets(){
+  const wrap=$("#macroSets"); if(!wrap) return; wrap.innerHTML="";
+  const names=macroSetNames();
+  if(!names.length){ wrap.innerHTML='<div class="note dim">No scheme sets yet — name one and import its .json (a Schemes-tab library).</div>'; return; }
+  for(const nm of names){
+    const d=document.createElement("div"); d.className="msetrow";
+    d.innerHTML=`<span class="mname">${esc(nm)}</span><span class="mcnt">${(S.macro.sets[nm]||[]).length} schemes</span><span class="mdel" title="Remove">✕</span>`;
+    d.querySelector(".mdel").onclick=()=>{ delete S.macro.sets[nm]; S.macro.groups.forEach(g=>{ g.sets=g.sets.filter(s=>s!==nm); g.masters.forEach(m=>delete m.apply[nm]); }); macroPersist(); renderMacroSets(); renderGroups(); };
+    wrap.appendChild(d);
+  }
+}
+function macroImportSet(file){
+  macroInit();
+  let nm=($("#macroSetName").value||"").trim() || file.name.replace(/\.json$/i,"");
+  if(S.macro.sets[nm]!==undefined){ const b=nm; let k=2; while(S.macro.sets[nm]!==undefined) nm=`${b} ${k++}`; }
+  const fr=new FileReader();
+  fr.onload=()=>{ try{ const arr=JSON.parse(fr.result); if(Array.isArray(arr)){ S.macro.sets[nm]=arr; $("#macroSetName").value=""; macroPersist(); renderMacroSets(); renderGroups(); toast(`Set "${nm}" — ${arr.length} schemes`,"ok"); } else toast("Bad JSON (expected a scheme array)","err"); }catch(e){ toast("Bad JSON","err"); } };
+  fr.readAsText(file);
+}
+/* ---- groups & masters ---- */
+function defaultMaster(g){ const apply={}; (g?g.sets:[]).forEach(s=>apply[s]=true); return {name:"Master "+(((g&&g.masters.length)||0)+1), sat:-40,bri:-20,con:10, areas:{}, mounts:{}, apply}; }
+function addGroup(){ macroInit(); S.macro.groups.push({name:"Group "+(S.macro.groups.length+1), sets:[], masters:[]}); macroPersist(); renderGroups(); }
+function removeGroup(gi){ macroInit(); if(!confirm("Remove this whole group and its masters?")) return; S.macro.groups.splice(gi,1); macroPersist(); renderGroups(); }
+function dupGroup(gi){ macroInit(); const g=S.macro.groups[gi]; if(!g) return; S.macro.groups.splice(gi+1,0,JSON.parse(JSON.stringify(g))); macroPersist(); renderGroups(); }
+function addMaster(gi){ macroInit(); const g=S.macro.groups[gi]; if(!g) return; g.masters.push(defaultMaster(g)); S.macroOpen=gi+":"+(g.masters.length-1); macroPersist(); renderGroups(); }
+function removeMaster(gi,mi){ macroInit(); const g=S.macro.groups[gi]; if(!g) return; g.masters.splice(mi,1); if(S.macroOpen===gi+":"+mi) S.macroOpen=null; macroPersist(); renderGroups(); }
+function cloneMaster(m){ return {name:m.name,sat:m.sat,bri:m.bri,con:m.con,areas:Object.assign({},m.areas),mounts:JSON.parse(JSON.stringify(m.mounts||{})),apply:Object.assign({},m.apply)}; }
+function dupMasterAt(gi,mi){ macroInit(); const g=S.macro.groups[gi]; if(!g) return; const m=g.masters[mi]; if(!m) return; const c=cloneMaster(m); c.name=m.name+" copy"; g.masters.splice(mi+1,0,c); S.macroOpen=gi+":"+(mi+1); macroPersist(); renderGroups(); }
+function toggleGroupSet(gi,setName,on){ macroInit(); const g=S.macro.groups[gi]; if(!g) return; if(on){ if(!g.sets.includes(setName)) g.sets.push(setName); g.masters.forEach(m=>{ if(m.apply[setName]===undefined) m.apply[setName]=true; }); } else { g.sets=g.sets.filter(s=>s!==setName); g.masters.forEach(m=>delete m.apply[setName]); } macroPersist(); renderGroups(); }
+function toggleMasterApply(gi,mi,setName){ macroInit(); const m=S.macro.groups[gi]&&S.macro.groups[gi].masters[mi]; if(!m) return; m.apply[setName]=(m.apply[setName]===false); macroPersist(); renderGroups(); }
+function setMasterField(gi,mi,k,v){ const m=S.macro.groups[gi]&&S.macro.groups[gi].masters[mi]; if(!m) return; m[k]= k==="name"?v:(+v||0); macroPersist(); macroSummary(); }
+function setGroupName(gi,v){ const g=S.macro.groups[gi]; if(!g) return; g.name=v; macroPersist(); macroSummary(); }
+function setMasterArea(gi,mi,scope,ai,t,mmi){ const m=S.macro.groups[gi]&&S.macro.groups[gi].masters[mi]; if(!m) return; if(scope==="char"){ m.areas=m.areas||{}; if(t==="free") delete m.areas[ai]; else m.areas[ai]=t; } else { m.mounts=m.mounts||{}; m.mounts[mmi]=m.mounts[mmi]||{}; if(t==="free") delete m.mounts[mmi][ai]; else m.mounts[mmi][ai]=t; if(!Object.keys(m.mounts[mmi]).length) delete m.mounts[mmi]; } macroPersist(); }
+function masterAreaSummary(m){
+  const c={lock:0,black:0,white:0,desat:0}; for(const k in (m.areas||{})) if(c[m.areas[k]]!=null) c[m.areas[k]]++;
+  for(const mi in (m.mounts||{})) for(const k in m.mounts[mi]) if(c[m.mounts[mi][k]]!=null) c[m.mounts[mi][k]]++;
+  const b=[]; if(c.lock)b.push(c.lock+"🔒"); if(c.black)b.push(c.black+" blk"); if(c.white)b.push(c.white+" wht"); if(c.desat)b.push(c.desat+" des");
+  return b.length?b.join(" · "):"all free";
+}
+/* Stable identity for an area = its lowest raw palette slot. Unlike list position,
+   this survives re-detection across class-specific mount sprites (the beast colours
+   live at the same raw slots, so a lock follows the colour, not the ordering). */
+function areaAnchor(a){ return a&&a.indices&&a.indices.length?Math.min.apply(null,a.indices):-1; }
+function segGroupM(gi,mi,scope,cur,key,mmi){
+  const attrs=`data-gi="${gi}" data-mi="${mi}" data-scope="${scope}" data-key="${key}"`+(scope==="mount"?` data-mmi="${mmi}"`:"");
+  return `<div class="segrp" ${attrs}>`+TREAT.map(([v,lbl])=>`<button class="seg${(cur||"free")===v?" on":""}" data-t="${v}">${lbl}</button>`).join("")+`</div>`;
+}
+/* Effective rider = the index-aligned base set, adjusted by the user's per-area
+   overrides: an area forced "rider" makes all its slots follow the character; an
+   area forced "beast" frees all its slots for theming. Lets the user fix the rare
+   case the auto-detection gets wrong in either direction. */
+function recomputeMountRider(m){
+  if(!m.riderBase) m.riderBase=new Set(m.rider||[]);
+  const r=new Set(m.riderBase); const ov=m.classOverride||{};
+  for(const a of (m.areas||[])){ const c=ov[areaAnchor(a)];
+    if(c==="rider"){ for(const i of a.indices){ if(i!==0&&!isMagenta(m.baked,i)) r.add(i); } }
+    else if(c==="beast"){ for(const i of a.indices) r.delete(i); }
+  }
+  m.rider=r;
+}
+/* an area's auto class before any override: rider if every drawn slot is rider */
+function areaAutoClass(m, a){ const rb=m.riderBase||new Set(); const live=a.indices.filter(i=>i!==0&&!isMagenta(m.baked,i)&&(!m.used||m.used.has(i))); if(!live.length) return "rider"; return live.every(i=>rb.has(i))?"rider":"beast"; }
+function areaClass(m, a){ const ov=(m.classOverride||{})[areaAnchor(a)]; return ov||areaAutoClass(m,a); }
+function mountBeastAreas(m){ const rider=m.rider||new Set();
+  return (m.areas||[]).map((a)=>{ const ind=a.indices.filter(i=>i!==0&&!isMagenta(m.baked,i)&&!rider.has(i)&&(!m.used||m.used.has(i))); return {anchor: ind.length?Math.min.apply(null,ind):-1, name:a.name, indices:ind}; }).filter(x=>x.indices.length); }
+function renderMasterEditor(gi,mi){
+  const m=S.macro.groups[gi].masters[mi];
+  if(!S.areas.length) return `<div class="mexpand"><div class="dim" style="padding:8px">Load a sprite and detect areas first.</div></div>`;
+  let h='<div class="mxhead">Character areas <span class="dim">— click a name to flash it on the sprite</span></div>'; let rn=0;
+  S.areas.forEach((a,ai)=>{ const k=areaAnchor(a); const allOn=areaLockedAllMasters(k); h+=`<div class="mxarea${(rn++%2)?" alt":""}"><span class="mxname mxflash" data-ai="${ai}">${esc(a.name)}</span>${segGroupM(gi,mi,"char",(m.areas&&m.areas[k]),k)}<button class="mxall${allOn?" on":""}" data-allkey="${k}" title="Lock this area on EVERY master at once (click again to clear it everywhere)">${allOn?"🔒 all ✓":"🔒 all"}</button></div>`; });
+  (S.mounts||[]).forEach((mt,mmi)=>{ const beast=mountBeastAreas(mt); h+=`<div class="mxhead">Mount: ${esc(mt.base)} <span class="dim">— beast areas only (rider follows character)</span></div>`; rn=0;
+    if(!beast.length) h+='<div class="dim" style="padding:4px 2px">no separate beast areas</div>';
+    beast.forEach(x=>{ h+=`<div class="mxarea${(rn++%2)?" alt":""}"><span class="mxname mxflashm" data-mmi="${mmi}" data-anchor="${x.anchor}">${esc(x.name)}</span>${segGroupM(gi,mi,"mount",(m.mounts&&m.mounts[mmi]&&m.mounts[mmi][x.anchor]),x.anchor,mmi)}</div>`; });
+  });
+  return `<div class="mexpand">${h}<div class="note dim" style="margin:6px 2px 2px"><b>Free</b>=recoloured by scheme · <b>Lock</b>=keep original · <b>Black/White</b>=neutral ramp · <b>Desat</b>=greyscale.</div></div>`;
+}
+function renderGroups(){
+  const wrap=$("#macroGroups"); if(!wrap) return; macroInit(); wrap.innerHTML="";
+  const allSets=macroSetNames();
+  if(!S.macro.groups.length){ wrap.innerHTML='<div class="note dim">No groups yet. Add a group, tick which scheme sets (colours) it covers, then add masters — each master is a Sat/Bri/Con + lock preset you apply to one or more of those colours.</div>'; }
+  S.macro.groups.forEach((g,gi)=>{
+    const card=document.createElement("div"); card.className="mgroup";
+    const setChecks=allSets.map(s=>`<label class="mchk"><input type="checkbox" data-gset="${gi}" value="${esc(s)}" ${g.sets.includes(s)?"checked":""}> ${esc(s)}</label>`).join("")||'<span class="dim">import scheme sets above first</span>';
+    const masters=g.masters.map((m,mi)=>{
+      const isOpen=S.macroOpen===gi+":"+mi;
+      const chips=g.sets.length? g.sets.map(s=>`<label class="mchip${m.apply[s]===false?"":" on"}"><input type="checkbox" data-apply="${gi}:${mi}" value="${esc(s)}" ${m.apply[s]===false?"":"checked"}> ${esc(s)}</label>`).join("") : '<span class="dim">tick colours above</span>';
+      return `<div class="mmaster">
+        <div class="mmrow">
+          <input class="mmname" data-mf="${gi}:${mi}:name" value="${esc(m.name)}" placeholder="master name">
+          <span class="mmsbc">S<input type="number" data-mf="${gi}:${mi}:sat" value="${m.sat}">B<input type="number" data-mf="${gi}:${mi}:bri" value="${m.bri}">C<input type="number" data-mf="${gi}:${mi}:con" value="${m.con}"></span>
+          <span class="mrowx"><span class="mdup" data-mdup="${gi}:${mi}" title="Duplicate master (after)">⧉</span><span class="mx" data-mrm="${gi}:${mi}" title="Remove master">✕</span></span>
+        </div>
+        <div class="mapply"><span class="dim">Apply to:</span> ${chips}</div>
+        <button class="mareas${isOpen?" on":""}" data-mareas="${gi}:${mi}">${isOpen?"▾":"▸"} Areas — ${esc(masterAreaSummary(m))}</button>
+        ${isOpen?renderMasterEditor(gi,mi):""}
+      </div>`;
+    }).join("");
+    card.innerHTML=`<div class="mghead"><input class="mgname" data-gf="${gi}" value="${esc(g.name)}"><span class="mrowx"><span class="mdup" data-gdup="${gi}" title="Duplicate group">⧉</span><span class="mx" data-grm="${gi}" title="Remove group">✕</span></span></div>
+      <div class="mgsets"><span class="dim">Colours in this group (export order):</span><div class="mchkrow">${setChecks}</div></div>
+      <div class="mmasters">${masters}</div>
+      <button class="btn ghost mgaddm" data-gaddm="${gi}"><span class="ic">＋</span> Add master</button>`;
+    wrap.appendChild(card);
+  });
+  // wiring
+  wrap.querySelectorAll('[data-gf]').forEach(el=>el.onchange=()=>setGroupName(+el.dataset.gf, el.value));
+  wrap.querySelectorAll('[data-gdup]').forEach(el=>el.onclick=()=>dupGroup(+el.dataset.gdup));
+  wrap.querySelectorAll('[data-grm]').forEach(el=>el.onclick=()=>removeGroup(+el.dataset.grm));
+  wrap.querySelectorAll('[data-gaddm]').forEach(el=>el.onclick=()=>addMaster(+el.dataset.gaddm));
+  wrap.querySelectorAll('[data-gset]').forEach(el=>el.onchange=()=>toggleGroupSet(+el.dataset.gset, el.value, el.checked));
+  wrap.querySelectorAll('[data-mf]').forEach(el=>{ const [gi,mi,k]=el.dataset.mf.split(":"); el.onchange=()=>setMasterField(+gi,+mi,k,el.value); });
+  wrap.querySelectorAll('[data-apply]').forEach(el=>{ const [gi,mi]=el.dataset.apply.split(":"); el.onchange=()=>toggleMasterApply(+gi,+mi,el.value); });
+  wrap.querySelectorAll('[data-mdup]').forEach(el=>{ el.onclick=()=>{ const [gi,mi]=el.dataset.mdup.split(":"); dupMasterAt(+gi,+mi); }; });
+  wrap.querySelectorAll('[data-mrm]').forEach(el=>{ el.onclick=()=>{ const [gi,mi]=el.dataset.mrm.split(":"); removeMaster(+gi,+mi); }; });
+  wrap.querySelectorAll('[data-mareas]').forEach(el=>{ el.onclick=()=>{ const id=el.dataset.mareas; S.macroOpen = S.macroOpen===id?null:id; renderGroups(); }; });
+  wrap.querySelectorAll('.mxflash').forEach(el=>{ el.onclick=()=>{ const a=S.areas[+el.dataset.ai]; if(a) flashArea(a.indices); }; });
+  wrap.querySelectorAll('.mxall').forEach(b=>{ b.onclick=(e)=>{ e.stopPropagation(); toggleAreaAllMasters(+b.dataset.allkey); }; });
+  wrap.querySelectorAll('.mxflashm').forEach(el=>{ el.onclick=()=>{ flashMountArea(+el.dataset.mmi, +el.dataset.anchor); }; });
+  wrap.querySelectorAll('.segrp .seg').forEach(b=>{ b.onclick=()=>{ const grp=b.closest('.segrp'); setMasterArea(+grp.dataset.gi,+grp.dataset.mi,grp.dataset.scope,+grp.dataset.key,b.dataset.t, grp.dataset.mmi!=null?+grp.dataset.mmi:undefined); grp.querySelectorAll('.seg').forEach(x=>x.classList.toggle('on',x===b)); const btn=b.closest('.mmaster')?.querySelector('[data-mareas]'); const m=S.macro.groups[+grp.dataset.gi].masters[+grp.dataset.mi]; if(btn) btn.innerHTML="▾ Areas — "+esc(masterAreaSummary(m)); macroSummary(); updateLockCount(); }; });
+  macroSummary();
+}
+function macroPlan(){
+  macroInit(); const jobs=[];
+  S.macro.groups.forEach(g=>{ g.sets.forEach(setName=>{ const schemes=S.macro.sets[setName]||[]; if(!schemes.length) return; g.masters.forEach(m=>{ if(m.apply[setName]===false) return; jobs.push({gname:g.name, setName, master:m, schemes}); }); }); });
+  return jobs;
+}
+function macroSummary(){
+  const el=$("#macroSummary"); if(!el) return; macroInit();
+  const jobs=macroPlan(); const mounts=(S.mounts&&S.mounts.length)||0; const incMount=$("#macroMounts")?.checked;
+  let total=0; jobs.forEach(j=>total+=j.schemes.length);
+  const start=+($("#macroStart")?.value||0);
+  let s=`Plan: <b>${S.macro.groups.length}</b> group(s) · <b>${jobs.length}</b> colour×master passes · <b>${total}</b> character palettes (ids ${start}–${Math.max(start,start+total-1)})`;
+  if(incMount&&mounts) s+=` + <b>${total*mounts}</b> mount palettes ×${mounts} (before aliases)`;
+  let rows="", acc=start;
+  jobs.forEach(j=>{ const n=j.schemes.length, a0=acc, a1=acc+n-1; acc+=n; rows+=`<div class="mbrow"><span class="dim">${esc(j.gname)} ›</span> <b>${esc(j.setName)}</b> × ${esc(j.master.name)} <span class="dim">×${n} · ids ${a0}–${a1} · S${j.master.sat}/B${j.master.bri}/C${j.master.con} · ${esc(masterAreaSummary(j.master))}</span></div>`; });
+  el.innerHTML=s+(rows?`<div class="mbreak">${rows}</div>`:"");
+}
+function applyNeutralRamp(pal, indices, kind, src){
+  src=src||pal;   // read the shading ramp from the ORIGINAL baked sprite so black/white are fixed
+  const conF = kind==="desat" ? 1 : 1.3;
+  const briD = kind==="black" ? -0.30 : kind==="white" ? 0.30 : 0;
+  for(const i of indices){ if(i===0||isMagenta(pal,i)) continue;
+    let [,,l]=rgb2hsl(...getRGB(src,i));
+    l=Math.max(0,Math.min(1,(l-0.5)*conF+0.5+briD));
+    const [r,g,b]=hsl2rgb(0,0,l); setRGB(pal,i,r,g,b);
+  }
+}
+function applyRunTreatments(pal, entries, src, treatMap){
+  const treated=new Set();
+  entries.forEach((e)=>{ const t=(treatMap&&treatMap[e.key])||"free"; if(t==="free") return;
+    if(t==="lock"){ for(const i of e.indices){ if(i===0||isMagenta(src,i)) continue; const c=getRGB(src,i); setRGB(pal,i,c[0],c[1],c[2]); } }
+    else applyNeutralRamp(pal, e.indices, t, src);   // greyscale from the baked ramp, scheme/S-B-C independent
+    for(const i of e.indices) treated.add(i);
+  });
+  return treated;
+}
+function runMacro(){
+  macroInit();
+  if(!S.spr){ toast("Load a class sprite first","err"); return; }
+  if(!S.areas.length) autoDetectAreas($("#areaGran")?.value||"balanced");
+  const jobs=macroPlan();
+  if(!jobs.length){ toast("Nothing to export — add a group, tick colours, add masters","err"); return; }
+  const charNames=charBaseNames();
+  const incMount = $("#macroMounts")?.checked && S.mounts && S.mounts.length;
+  const origLocked=S.locked, origAdjust=S.adjust, origAreaLocked=S.areas.map(a=>a.locked);
+  const files=[]; let id=+($("#macroStart")?.value||0);
+  try{
+    S.areas.forEach(a=>a.locked=false); S.locked=new Set();
+    for(const job of jobs){
+      const m=job.master; S.adjust={sat:m.sat,bri:m.bri,con:m.con};
+      for(const sc of job.schemes){
+        const rec=applySchemeToPal(sc, S.bakedPal);
+        const charEntries=S.areas.map(a=>({key:areaAnchor(a), indices:a.indices}));
+        const treated=applyRunTreatments(rec, charEntries, S.bakedPal, m.areas);
+        const charPal=adjustPal(rec, treated);
+        const cdata=buildPalBytes(remapToExport(charPal));
+        for(const b of charNames) files.push({ name:`${b}${genderSuffix()}_${id}${costumeSuffix()}.pal`, data:cdata });
+        if(incMount) S.mounts.forEach((mount,mmi)=>{
+          const mp=buildMountPal(mount, sc, charPal);
+          const beast=mountBeastAreas(mount).map(x=>({key:x.anchor, indices:x.indices}));
+          const treatedB=applyRunTreatments(mp, beast, mount.baked, (m.mounts&&m.mounts[mmi]));
+          const keep=new Set(treatedB); for(const i of (mount.rider||[])) keep.add(i);
+          const data=buildPalBytes(adjustPal(mp, keep));
+          const names=[mount.base, ...(mount.aliases||[])].map(s=>(s||"").trim()).filter(Boolean); const seen=new Set();
+          for(const nm of names){ if(seen.has(nm)) continue; seen.add(nm); files.push({ name:`${nm}${genderSuffix()}_${id}${costumeSuffix()}.pal`, data }); }
+        });
+        id++;
+      }
+    }
+  } finally { S.locked=origLocked; S.adjust=origAdjust; S.areas.forEach((a,i)=>a.locked=origAreaLocked[i]); }
+  if(!files.length){ toast("Nothing generated — check your scheme sets","err"); return; }
+  download(makeZip(files), asciiZipName(charNames[0]).replace(/\.zip$/,"_macro_pack.zip"));
+  toast(`Macro: ${files.length} palettes · ids ${+($("#macroStart")?.value||0)}–${id-1}`,"ok");
+}
+function exportMacroJson(){ macroInit(); download(new TextEncoder().encode(JSON.stringify(serializeMacro())), "palette_forge_macro.json"); }
+function importMacroJson(file){ const fr=new FileReader(); fr.onload=()=>{ try{ S.macro=normalizeMacro(JSON.parse(fr.result)); S.macroOpen=null; macroInit(); migrateMacroKeys(); if($("#macroStart")) $("#macroStart").value=S.macro.startId||0; macroPersist(); renderMacro(); toast(`Imported macro — ${S.macro.groups.length} group(s)`,"ok"); }catch(e){ toast("Bad macro JSON","err"); } }; fr.readAsText(file); }
+function updateMacroMountsLabel(){ const el=$("#macroMountsN"); if(el) el.textContent=(S.mounts&&S.mounts.length)?`(${S.mounts.length} loaded)`:"(none loaded)"; }
+function renderMacro(){ macroInit(); if($("#macroStart")&&S.macro.startId) $("#macroStart").value=S.macro.startId; renderMacroSets(); renderGroups(); updateMacroMountsLabel(); updateLockCount(); }
+
+
+const CRC_T=(()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0;} return t; })();
+function crc32(buf){ let c=0xFFFFFFFF; for(let i=0;i<buf.length;i++) c=CRC_T[(c^buf[i])&0xFF]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+function strBytes(s){ return new TextEncoder().encode(s); }   // UTF-8 (with bit 11 set, extractors decode correctly)
+function makeZip(files){
+  const chunks=[]; const central=[]; let offset=0;
+  const FLAG=0x0800;   // general-purpose bit 11 = filename is UTF-8
+  const u16=v=>[v&0xFF,(v>>8)&0xFF]; const u32=v=>[v&0xFF,(v>>8)&0xFF,(v>>16)&0xFF,(v>>24)&0xFF];
+  for(const f of files){
+    const nameB=strBytes(f.name); const data=f.data; const crc=crc32(data);
+    const local=[].concat([0x50,0x4b,0x03,0x04], u16(20),u16(FLAG),u16(0), u16(0),u16(0), u32(crc), u32(data.length),u32(data.length), u16(nameB.length),u16(0));
+    chunks.push(new Uint8Array(local)); chunks.push(nameB); chunks.push(data);
+    const cen=[].concat([0x50,0x4b,0x01,0x02], u16(20),u16(20),u16(FLAG),u16(0), u16(0),u16(0), u32(crc), u32(data.length),u32(data.length), u16(nameB.length),u16(0),u16(0),u16(0),u16(0),u32(0), u32(offset));
+    central.push(new Uint8Array(cen)); central.push(nameB);
+    offset+=local.length+nameB.length+data.length;
+  }
+  let censize=0; for(const c of central) censize+=c.length;
+  const end=new Uint8Array([].concat([0x50,0x4b,0x05,0x06], u16(0),u16(0), u16(files.length),u16(files.length), u32(censize), u32(offset), u16(0)));
+  const all=[...chunks,...central,end];
+  let total=0; for(const c of all) total+=c.length;
+  const out=new Uint8Array(total); let p=0; for(const c of all){ out.set(c,p); p+=c.length; }
+  return out;
+}
+
+/* ============================================================
+   Info
+   ============================================================ */
+function renderInfo(){
+  const box=$("#infoBox"); if(!S.spr){ box.innerHTML='<div class="note">Load a sprite to see details.</div>'; return; }
+  const kv=(k,v)=>`<div class="kv"><span>${k}</span><b>${v}</b></div>`;
+  const magCount=(()=>{ let n=0; for(let i=0;i<256;i++) if(isMagenta(displayPal(),i)) n++; return n; })();
+  box.innerHTML =
+    kv("SPR version", S.spr.ver)+
+    kv("Frames (images)", S.spr.frames.length)+
+    kv("RGBA frames", S.spr.rgbaFrames.length)+
+    kv("Indices used", `${S.used.size} / 256`)+
+    kv("Magenta (reserved)", magCount)+
+    kv("Locked", S.locked.size)+
+    kv("Detected areas", S.areas.length)+
+    `<div class="note pinkn" style="margin-top:12px">Magenta slots are the sprite's unused indices. The client treats FF00FF as transparent, so the tool always preserves them — this is what keeps mount palettes safe.</div>`;
+}
+
+/* ============================================================
+   Playback
+   ============================================================ */
+function togglePlay(){
+  S.playing=!S.playing; $("#playBtn").textContent=S.playing?"❚❚":"▶";
+  if(S.playing){ const step=()=>{ S.curFrame=(S.curFrame+1)%S.spr.frames.length; renderFrame(); renderStrip(); S.playTimer=setTimeout(step,1000/S.fps); }; step(); }
+  else clearTimeout(S.playTimer);
+}
+
+/* ============================================================
+   Tabs
+   ============================================================ */
+function setTab(name){
+  $$("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
+  $$(".pane").forEach(p=>p.classList.toggle("hidden",p.dataset.pane!==name));
+  if(name==="areas") renderAreas();
+  if(name==="mount") renderMounts();
+  if(name==="generate") renderSchemePrev();
+  if(name==="macro") renderMacro();
+  if(name==="info") renderInfo();
+}
+
+/* ============================================================
+   Wire-up
+   ============================================================ */
+function bindSlider(id,labelId,fn){
+  const el=$("#"+id); el.addEventListener("input",()=>{ $("#"+labelId).textContent=el.value; if(fn)fn(); });
+}
+function init(){
+  // file buttons
+  $("#openSpr").onclick=()=>$("#fSpr").click();
+  $("#openPal").onclick=()=>$("#fPal").click();
+  $("#fSpr").onchange=e=>{ if(e.target.files[0]) loadSprFile(e.target.files[0]); e.target.value=""; };
+  $("#fPal").onchange=e=>{ if(e.target.files[0]) loadPalFile(e.target.files[0]); e.target.value=""; };
+  $("#savePal").onclick=exportSingle;
+  $("#resetPal").onclick=()=>{ if(!S.bakedPal)return; S.workPal=new Uint8Array(S.bakedPal); S.adjLive=null; setSrc("baked"); toast("Reset to baked-in","ok"); };
+
+  // drag & drop
+  const area=$("#canvasArea");
+  area.addEventListener("dragover",e=>{e.preventDefault();});
+  area.addEventListener("drop",e=>{ e.preventDefault(); const f=e.dataTransfer.files[0]; if(!f)return;
+    if(/\.spr$/i.test(f.name)) loadSprFile(f); else if(/\.pal$/i.test(f.name)) loadPalFile(f);; });
+
+  // src toggle
+  $$("#srcToggle button").forEach(b=>b.onclick=()=>setSrc(b.dataset.src));
+
+  // tabs
+  $$("#tabs button").forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+
+  // theme (default light = RO classic; dark optional, persisted)
+  const applyTheme=t=>{ const dark=t==="dark"; document.body.classList.toggle("dark",dark); const ic=$("#themeIc"); if(ic) ic.textContent=dark?"☀":"🌙"; try{ localStorage.setItem("pf_theme",t); }catch(_){} };
+  let savedTheme="light"; try{ savedTheme=localStorage.getItem("pf_theme")||"light"; }catch(_){}
+  applyTheme(savedTheme);
+  $("#themeBtn").onclick=()=>applyTheme(document.body.classList.contains("dark")?"light":"dark");
+
+  // palette tool modes (pick / area / lock)
+  S.palMode="pick";
+  $$("#palTools button").forEach(b=>b.onclick=()=>{ S.palMode=b.dataset.mode; $$("#palTools button").forEach(x=>x.classList.toggle("on",x===b)); });
+
+  // schemes library
+  $("#schemeSave").onclick=captureScheme;
+  $("#schemeRoll").onclick=()=>rollSchemes(Math.max(1,Math.min(700,+$("#schemeRollN").value||20)));
+  // Macro tab
+  $("#macroSetImport")?.addEventListener("click",()=>$("#macroSetFile").click());
+  $("#macroSetFile")?.addEventListener("change",e=>{ if(e.target.files[0]) macroImportSet(e.target.files[0]); e.target.value=""; });
+  $("#macroAddGroup")?.addEventListener("click",()=>addGroup());
+  $("#macroUnlockAll")?.addEventListener("click",unlockAllLocks);
+  $("#macroExport")?.addEventListener("click",runMacro);
+  $("#macroMounts")?.addEventListener("change",macroSummary);
+  $("#macroStart")?.addEventListener("change",()=>{ macroPersist(); macroSummary(); });
+  $("#macroExportJson")?.addEventListener("click",exportMacroJson);
+  $("#macroImport")?.addEventListener("click",()=>$("#macroImportFile").click());
+  $("#macroImportFile")?.addEventListener("change",e=>{ if(e.target.files[0]) importMacroJson(e.target.files[0]); e.target.value=""; });
+  $("#schemeSpread")?.addEventListener("input",()=>{ const v=$("#schemeSpreadV"); if(v) v.textContent=$("#schemeSpread").value+"%"; });
+  $("#schemeVariety")?.addEventListener("input",()=>{ const v=$("#schemeVarietyV"); if(v) v.textContent=$("#schemeVariety").value+"%"; });
+  $("#schemeClear").onclick=()=>{ if(S.schemes&&S.schemes.length&&confirm("Clear all saved schemes?")){ S.schemes=[]; S.activeScheme=-1; schemesPersist(); renderSchemes(); } };
+  $("#schemeExportZip").onclick=exportSchemesZip;
+  (function(){
+    schemesInit();
+    const ids=[["adjSat","sat"],["adjBri","bri"],["adjCon","con"]];
+    const sync=()=>{ ids.forEach(([id,key])=>{ const el=$("#"+id); if(el){ el.value=S.adjust[key]; const v=$("#"+id+"V"); if(v) v.textContent=(S.adjust[key]>0?"+":"")+S.adjust[key]+"%"; } }); };
+    const refresh=()=>{ if(S.activeScheme>=0 && S.schemes[S.activeScheme]) applyScheme(S.activeScheme); };
+    ids.forEach(([id,key])=>{ const el=$("#"+id); if(!el) return;
+      el.addEventListener("input",()=>{ S.adjust[key]=+el.value; const v=$("#"+id+"V"); if(v) v.textContent=(S.adjust[key]>0?"+":"")+S.adjust[key]+"%"; adjustPersist(); refresh(); });
+    });
+    $("#schemeAdjReset")?.addEventListener("click",()=>{ S.adjust={sat:0,bri:0,con:0}; adjustPersist(); sync(); refresh(); });
+    sync();
+  })();
+  $("#addMount").onclick=()=>{ if(!S.spr){ toast("Load the base class sprite first","err"); return; } $("#mountFile").click(); };
+  $("#mountFile").onchange=e=>{ addMountFiles(e.target.files); e.target.value=""; };
+  const updMountChk=()=>{ const n=(S.mounts||[]).length; const t=$("#schemeMountsN"); if(t) t.textContent=n?`(${n} added)`:"(none added yet — see Mount tab)"; };
+  $("#schemeMounts")?.addEventListener("change",updMountChk);
+  const _renderMounts=renderMounts; renderMounts=function(){ _renderMounts(); updMountChk(); };
+  renderMounts();
+  $("#schemeExportJson").onclick=exportSchemesJson;
+  $("#schemeImport").onclick=()=>$("#schemeImportFile").click();
+  $("#schemeImportFile").onchange=e=>{ if(e.target.files[0]) importSchemesJson(e.target.files[0]); e.target.value=""; };
+  renderSchemes();
+
+  // canvas
+  $("#view").addEventListener("mousemove",onCanvasMove);
+  $("#view").addEventListener("mouseleave",()=>{ $("#hud").innerHTML=""; S.hoverIdx=-1; if(S.spr){renderFrame();markHov();} });
+  $("#view").addEventListener("click",onCanvasClick);
+
+  // zoom + play
+  $("#zoomIn").onclick=()=>{ S.zoom=Math.min(12,S.zoom+1); renderFrame(); };
+  $("#zoomOut").onclick=()=>{ S.zoom=Math.max(1,S.zoom-1); renderFrame(); };
+  $("#playBtn").onclick=()=>{ if(S.spr) togglePlay(); };
+  $("#fps").oninput=e=>{ S.fps=+e.target.value; $("#fpsLbl").textContent=e.target.value+" fps"; };
+
+  // palette editor
+  const editFromRGB=()=>{
+    const r=+$("#rIn").value,g=+$("#gIn").value,b=+$("#bIn").value;
+    $("#rVal").textContent=r;$("#gVal").textContent=g;$("#bVal").textContent=b;
+    $("#bigSw").value=rgb2hex(r,g,b); $("#hexIn").value=rgb2hex(r,g,b);
+    applyEditColor(r,g,b);
+  };
+  ["rIn","gIn","bIn"].forEach(id=>$("#"+id).addEventListener("input",editFromRGB));
+  $("#hexIn").addEventListener("change",()=>{ try{ const [r,g,b]=hex2rgb($("#hexIn").value); setEditUI(r,g,b); applyEditColor(r,g,b); }catch(_){}});
+  $("#bigSw").addEventListener("input",()=>{ const [r,g,b]=hex2rgb($("#bigSw").value); setEditUI(r,g,b); applyEditColor(r,g,b); });
+
+  // areas
+  $("#detectAreas").onclick=()=>{ autoDetectAreas($("#areaGran").value); toast("Areas detected","ok"); };
+  $("#areaGran").onchange=()=>autoDetectAreas($("#areaGran").value);
+  $("#applyAreaColor").onclick=()=>{ const t=editTargets(); if(!t.length){toast("Select an area first","err");return;} recolorTargets(t,$("#areaColor").value); renderAll(); renderAreas(); toast("Recolored","ok"); };
+  ["areaSat","areaBri","areaCon"].forEach(id=>{ const el=$("#"+id); if(!el) return; el.addEventListener("input",()=>{ const v=$("#"+id+"V"); if(v) v.textContent=(+el.value>0?"+":"")+el.value+"%"; areaAdjApply(); }); });
+  $("#lockArea").onclick=()=>{ if(S.selArea<0){toast("Select an area","err");return;} const a=S.areas[S.selArea]; a.locked=true; a.indices.forEach(i=>S.locked.add(i)); renderAreas(); renderPalette(); };
+  $("#selectAreaPix").onclick=()=>{ if(S.selArea<0){toast("Select an area","err");return;} toast("Area indices highlighted on sprite — hover the palette to see them","ok"); };
+
+  // adjust
+  ["aHue","aSat","aBri","aCon"].forEach(id=>{ $("#"+id).addEventListener("input",()=>{ $("#"+id+"V").textContent=$("#"+id).value; adjLivePreview(); }); });
+  $("#adjApply").onclick=adjBake;
+  $("#adjReset").onclick=adjResetSliders;
+
+  // generate
+  bindSlider("genBalance","genBalanceV",renderSchemePrev);
+  bindSlider("genSat","genSatV"); bindSlider("genBri","genBriV"); bindSlider("genCon","genConV");
+  $("#genScheme").onchange=renderSchemePrev;
+  $("#genBalanceMode").onchange=renderSchemePrev;
+  renderCurated();
+  bindSlider("batchVary","batchVaryV");
+  $("#genBase").oninput=renderSchemePrev;
+  cpInit();
+  bindSwatch("#genBaseSw","#genBase",()=>{ renderSchemePrev(); });
+  bindSwatch("#areaColorSw","#areaColor");
+  $("#chAdd")?.addEventListener("click",addCustomPalette);
+  $("#mdockClose")?.addEventListener("click",()=>{ S.mdockHidden=true; renderMountDock(); });
+  $("#mdockReopen")?.addEventListener("click",()=>{ S.mdockHidden=false; renderMountDock(); });
+  $("#chUrl")?.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addCustomPalette(); } });
+  $("#genRoll").onclick=genRoll;
+  $("#genApply").onclick=genApply;
+
+  // remap
+  $("#buildMap").onclick=()=>{ buildMap(); updateLockMapUI(); };
+  $("#lockMap").onclick=()=>{
+    if(!S.map){ toast("Build a map first","err"); return; }
+    S.mapLocked=!S.mapLocked; updateLockMapUI();
+    toast(S.mapLocked?"Map locked — .pal loads now preview":"Map unlocked","ok");
+  };
+  updateLockMapUI();
+  $("#mapTarget")?.addEventListener("change",()=>{});
+
+  // export
+  $$("#genderToggle button").forEach(b=>b.onclick=()=>{ S.gender=b.dataset.g; $$("#genderToggle button").forEach(x=>x.classList.toggle("on",x===b)); updateNamePreview(); });
+  $("#expBase").addEventListener("input",updateNamePreview);
+  $("#expAlias")?.addEventListener("input",updateNamePreview);
+  $("#expCostume")?.addEventListener("change",updateNamePreview);
+  $("#expCostumeSuffix")?.addEventListener("input",updateNamePreview);
+  $("#expNum").addEventListener("input",updateNamePreview);
+  $("#expSingle").onclick=exportSingle;
+  $("#expBatch").onclick=exportBatch;
+
+  updateNamePreview();
+  renderSchemePrev();
+}
+document.addEventListener("DOMContentLoaded",init);
+
+</script>
+  <div id="cpop" class="cpop" hidden>
+    <div class="cp-top">
+      <div class="cp-sv" id="cpSV"><div class="cp-cur" id="cpSVc"></div></div>
+      <div class="cp-hue" id="cpHue"><div class="cp-hc" id="cpHueC"></div></div>
+    </div>
+    <div class="cp-row"><span class="cp-prev" id="cpPrev"></span><input class="cp-hex" id="cpHex" maxlength="7" spellcheck="false"></div>
+    <div class="cp-grid">
+      <label>H</label><input id="cpH" type="number" min="0" max="360"><label>S</label><input id="cpS" type="number" min="0" max="100"><label>V</label><input id="cpV" type="number" min="0" max="100">
+      <label>R</label><input id="cpR" type="number" min="0" max="255"><label>G</label><input id="cpG" type="number" min="0" max="255"><label>B</label><input id="cpB" type="number" min="0" max="255">
+    </div>
+  </div>
+</body>
+</html>
