@@ -4,13 +4,13 @@ A single, self-contained HTML tool for creating and batch-baking Ragnarok Online
 
 ## Features
 
-- **Canonical palette layout model** — auto-detects Baked-in vs Custom palette layout and converts between them, so you're never fighting inconsistent index orders between files.
-- **Area auto-detection** — automatically groups palette indices into body-part areas (hair, cape, armor, boots, etc.) so you can recolor or lock a whole part at once.
-- **Shading-preserving recolor** — recolors keep each index's relative brightness, so results stay "painted" instead of flat.
-- **Mount support** — detects mount/rider palette regions and keeps the rider synced with the character automatically, with a magenta-exclusion guard to avoid false positives.
-- **Schemes & Macro system** — build reusable recolor recipes and shade/lock presets, then batch-bake full packs (colors × shades × locks) across a class and its mounts in one export.
-- **Flexible export** — character alias and gender suffix support, single `.pal` saves, or batch `.zip` export with UTF-8-safe filenames.
-- **Offline ColorHunt import** — paste a ColorHunt link or raw hex codes to add custom curated palettes, no network call needed.
+- **Palette layout**: auto-detects Baked-in vs Custom palette layout and converts between them, so you're never fighting inconsistent index orders between files.
+- **Area detection**: automatically groups palette indices into body-part areas (hair, cape, armor, boots, etc.) so you can recolor or lock a whole part at once.
+- **Shading-preserving**: recolors keep each index's relative brightness, so results stay "painted" instead of flat.
+- **Mount support**: detects mount/rider palette regions and keeps the rider synced with the character automatically, with a magenta-exclusion guard to avoid false positives.
+- **Schemes & Macro system**: build reusable recolor recipes and shade/lock presets, then batch-bake full packs (colors × shades × locks) across a class and its mounts in one export.
+- **Flexible export**: character alias and gender suffix support, single `.pal` saves, or batch `.zip` export with UTF-8-safe filenames.
+- **Offline ColorHunt import**: paste a ColorHunt link or raw hex codes to add custom curated palettes, no network call needed.
 
 ## Quick Start
 

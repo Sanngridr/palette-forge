@@ -87,10 +87,10 @@ A second sprite (Peco, dragon, etc.) whose rider shares the character's body pal
 
 The raw 256-colour grid plus a single-colour editor.
 
-- **Colors (256)** — The full palette grid. Click any swatch to select it.
-- **Edit selected color** — R / G / B fields and a "Pick" swatch button (opens the colour picker — see section 14) to set the exact colour of the selected index.
-- **Area** — Selects the whole area that the chosen index belongs to (handy to jump from one swatch to its whole body part).
-- **Lock** — Lock the selected index so generators/adjusters never touch it.
+- **Colors (256)**: The full palette grid. Click any swatch to select it.
+- **Edit selected color**: R / G / B fields and a "Pick" swatch button (opens the colour picker: see section 14) to set the exact colour of the selected index.
+- **Area**: Selects the whole area that the chosen index belongs to (handy to jump from one swatch to its whole body part).
+- **Lock**: Lock the selected index so generators/adjusters never touch it.
 
 **How to: change one exact colour**
 1. Click the swatch in the grid.
@@ -102,12 +102,12 @@ The raw 256-colour grid plus a single-colour editor.
 
 Work on whole body parts at once.
 
-- **Auto-detect** — Scans the palette and groups indices into areas. There is a granularity control (coarser = fewer, bigger areas; finer = more, smaller areas).
-- **Detected areas** — The list of areas. Select one to act on it.
-- **Select on sprite** — Flashes the selected area's pixels on the preview so you can see exactly what it covers.
-- **Recolor (keep shading)** — Recolour the selected area to a chosen colour while preserving its light-to-dark shading. Pick the target colour with the swatch (colour picker).
-- **Lock area** — Lock every index in the area.
-- **Tune selected area** — Live Saturation / Brightness / Contrast sliders that affect only the selected area. Great for nudging one part without disturbing the rest.
+- **Auto-detect**: Scans the palette and groups indices into areas. There is a granularity control (coarser = fewer, bigger areas; finer = more, smaller areas).
+- **Detected areas**: The list of areas. Select one to act on it.
+- **Select on sprite**: Flashes the selected area's pixels on the preview so you can see exactly what it covers.
+- **Recolor (keep shading)**: Recolour the selected area to a chosen colour while preserving its light-to-dark shading. Pick the target colour with the swatch (colour picker).
+- **Lock area**: Lock every index in the area.
+- **Tune selected area**: Live Saturation / Brightness / Contrast sliders that affect only the selected area. Great for nudging one part without disturbing the rest.
 
 **How to: recolour just the cape to teal**
 1. Auto-detect areas.
@@ -120,9 +120,9 @@ Work on whole body parts at once.
 
 Whole-palette tone shifting.
 
-- **Hue / Sat / Bri / Con** — Shift the entire palette's hue, saturation, brightness and contrast at once (locked + transparent slots are left alone).
-- **Reset sliders** — Return sliders to neutral.
-- **Bake in** — Commit the current slider result into the palette so it becomes the new baseline.
+- **Hue / Sat / Bri / Con**: Shift the entire palette's hue, saturation, brightness and contrast at once (locked + transparent slots are left alone).
+- **Reset sliders**: Return sliders to neutral.
+- **Bake in**: Commit the current slider result into the palette so it becomes the new baseline.
 
 Use this for quick global mood changes (e.g. "make the whole thing cooler/darker") before exporting or before generating variants.
 
@@ -132,16 +132,16 @@ Use this for quick global mood changes (e.g. "make the whole thing cooler/darker
 
 Create recoloured palettes from colour theory or a curated palette.
 
-- **Color scheme** — The harmony rule (e.g. monochromatic, complementary, analogous, ...). Used when no curated palette is picked.
-- **Base color** — The seed colour (opens the colour picker). Important: the generator respects the base colour's saturation and lightness, not only its hue — so a brown base makes muted browns, a near-white base makes light greys, a near-black base makes dark greys, and a vivid base stays vivid.
-- **Randomize base each roll** — Picks a fresh random base colour on every roll.
-- **Curated palette** — A fixed set of colours (Sunset Glow, Ocean Breeze, ...) distributed across the areas. Picking one overrides the colour-scheme rule above. "Color theory (off)" turns the curated palette back off. You can add your own here (see section 15). The colours are used as a hue family spread over the areas — not a literal 4-swatch fill.
-- **Color balance** — How hues are distributed across areas (e.g. "Free — one hue per area").
-- **Spread** — Hue jitter: high = hues spaced evenly/separated, low = clustered together.
-- **Modifiers (Sat/Bri/Con)** — Global tweaks layered on top of the generated result.
-- **Respect areas** — One hue per detected area (keeps parts visually distinct).
-- **Roll preview** — Generate a candidate and preview it on the sprite.
-- **Apply** — Commit the previewed generation to the palette.
+- **Color scheme**: The harmony rule (e.g. monochromatic, complementary, analogous, ...). Used when no curated palette is picked.
+- **Base color**: The seed colour (opens the colour picker). Important: the generator respects the base colour's saturation and lightness, not only its hue: so a brown base makes muted browns, a near-white base makes light greys, a near-black base makes dark greys, and a vivid base stays vivid.
+- **Randomize base each roll**: Picks a fresh random base colour on every roll.
+- **Curated palette**: A fixed set of colours (Sunset Glow, Ocean Breeze, ...) distributed across the areas. Picking one overrides the colour-scheme rule above. "Color theory (off)" turns the curated palette back off. You can add your own here (see section 15). The colours are used as a hue family spread over the areas: not a literal 4-swatch fill.
+- **Color balance**: How hues are distributed across areas (e.g. "Free: one hue per area").
+- **Spread**: Hue jitter: high = hues spaced evenly/separated, low = clustered together.
+- **Modifiers (Sat/Bri/Con)**: Global tweaks layered on top of the generated result.
+- **Respect areas**: One hue per detected area (keeps parts visually distinct).
+- **Roll preview**: Generate a candidate and preview it on the sprite.
+- **Apply**: Commit the previewed generation to the palette.
 
 **How to: generate a muted brown outfit**
 1. Open the Base color picker, dial in a brown (low-ish saturation, mid-dark).
@@ -154,9 +154,9 @@ Create recoloured palettes from colour theory or a curated palette.
 
 For working across the Baked-in ↔ Custom layout boundary.
 
-- **Build color map** — Builds the mapping between the baked-in index order and a custom (e.g. Kamish) order, by matching nearest colours.
-- **Lock map** — Freezes the current mapping so later edits use it consistently.
-- **Export index structure** — Controls how indices are written out.
+- **Build color map**: Builds the mapping between the baked-in index order and a custom (e.g. Kamish) order, by matching nearest colours.
+- **Lock map**: Freezes the current mapping so later edits use it consistently.
+- **Export index structure**: Controls how indices are written out.
 
 Most users only need this if their palettes come from a creator whose layout differs from Gravity's, and they see colours landing in the wrong slots.
 
@@ -166,10 +166,10 @@ Most users only need this if their palettes come from a creator whose layout dif
 
 Add mounts so a recolour produces matching character + mount palettes.
 
-- **Add mount (.spr)** — Load a mount sprite. The tool finds the "rider" indices (the part of the mount palette that mirrors the character body) and the "beast" indices (the mount itself).
+- **Add mount (.spr)**: Load a mount sprite. The tool finds the "rider" indices (the part of the mount palette that mirrors the character body) and the "beast" indices (the mount itself).
 
 **How mounts behave:**
-- The rider automatically follows the character's recolour, so a character's skin always matches its mounted version — you never theme it twice.
+- The rider automatically follows the character's recolour, so a character's skin always matches its mounted version: you never theme it twice.
 - The beast areas are themed by the scheme and can be locked/treated separately.
 - You can give a mount aliases (alternate base filenames) so one bake writes the palette under several mount names at once.
 
@@ -181,19 +181,19 @@ Mounts are picked up automatically by the Schemes and Macro batch exports when "
 
 Build a library of schemes (the building blocks for batch exports).
 
-- **Roll #** — How many schemes to roll at once.
-- **Roll** — Generate that many schemes into the library.
-- **Save current** — Save the current on-screen palette as a scheme.
-- **Variation** — Hue separation between rolled schemes (higher = the schemes differ from each other more).
-- **Tone variety** — How much tone/shade varies between rolled schemes.
-- **Scheme library** — The saved schemes.
-- **Clear all** — Empty the library.
-- **Import .json / Export .json** — Load or save the whole library as a `.json` file. This `.json` is exactly what the Macro tab imports as a "scheme set".
-- **Adjust before export (Sat/Bri/Con)** — Tone tweak applied to every scheme at bake time.
-- **Reset to neutral** — Zero those adjust sliders.
-- **Start #** — The first palette number used when baking.
-- **Also create mount palettes** — Include mount palettes in the bake.
-- **Export all as .zip** — Bake every scheme in the library into `.pal` files for the current class (numbered from Start #), zipped.
+- **Roll #**: How many schemes to roll at once.
+- **Roll**: Generate that many schemes into the library.
+- **Save current**: Save the current on-screen palette as a scheme.
+- **Variation**: Hue separation between rolled schemes (higher = the schemes differ from each other more).
+- **Tone variety**: How much tone/shade varies between rolled schemes.
+- **Scheme library**: The saved schemes.
+- **Clear all**: Empty the library.
+- **Import .json / Export .json**: Load or save the whole library as a `.json` file. This `.json` is exactly what the Macro tab imports as a "scheme set".
+- **Adjust before export (Sat/Bri/Con)**: Tone tweak applied to every scheme at bake time.
+- **Reset to neutral**: Zero those adjust sliders.
+- **Start #**: The first palette number used when baking.
+- **Also create mount palettes**: Include mount palettes in the bake.
+- **Export all as .zip**: Bake every scheme in the library into `.pal` files for the current class (numbered from Start #), zipped.
 
 **How to: make a 20-variant pack for one class**
 1. Load the class sprite, auto-detect areas.
@@ -204,7 +204,7 @@ Build a library of schemes (the building blocks for batch exports).
 
 ## 11. Tab: Macro (the big batch planner)
 
-The Macro plans a whole pack — many colours × many shade/lock presets × mounts — in one configuration, then exports it all with neat, contiguous file numbers. Three building blocks:
+The Macro plans a whole pack: many colours × many shade/lock presets × mounts: in one configuration, then exports it all with neat, contiguous file numbers. Three building blocks:
 
 **Scheme sets**
 Named scheme libraries (the `.json` you export from the Schemes tab). Import one per colour family, e.g. "red", "green", "blue".
@@ -212,7 +212,7 @@ Named scheme libraries (the `.json` you export from the Schemes tab). Import one
 - Duplicate filenames are auto-suffixed so importing several never silently overwrites.
 
 **Groups**
-A group selects which scheme sets (colours) it covers, and in what order. Groups run in sequence, so you can stage blocks — e.g. a "Basics" group before a "Colourful" group — while each block keeps its own internal order.
+A group selects which scheme sets (colours) it covers, and in what order. Groups run in sequence, so you can stage blocks: e.g. a "Basics" group before a "Colourful" group: while each block keeps its own internal order.
 
 **Masters**
 A master is a reusable Sat/Bri/Con + per-area treatment preset. Each master has "Apply to" checkboxes for the group's colours, so one master runs against several colours at once. Per-area treatments:
@@ -234,13 +234,13 @@ Bakes a full, structured pack (colours × shades × locks) for a class in one ex
 Shows the full plan (scheme set, master, id range, S/B/C, lock summary) so you can verify before exporting.
 
 **Controls**
-- **Add group / Add master / the ⧉ icons** — duplicate a master (inserts after) or a whole group. ✕ removes.
-- **Start #** — first file number.
-- **Include mount palettes / Export full pack .zip** — bakes character + all loaded mounts for every pass.
-- **Import macro .json / Export macro .json** — save or share the entire plan, including every master's Sat/Bri/Con and per-area locks.
+- **Add group / Add master / the ⧉ icons**: duplicate a master (inserts after) or a whole group. ✕ removes.
+- **Start #**: first file number.
+- **Include mount palettes / Export full pack .zip**: bakes character + all loaded mounts for every pass.
+- **Import macro .json / Export macro .json**: save or share the entire plan, including every master's Sat/Bri/Con and per-area locks.
 
 **Persistence / reuse across characters**
-The whole plan — groups, masters, and their per-area locks — is saved on the device and is no longer cleared when you load a new sprite. Because area treatments are keyed by area position, the same class's other characters share the same layout, so your locks carry straight over: load the next character, export again. (Different class? Areas differ, so re-check or re-import a suitable macro.)
+The whole plan: groups, masters, and their per-area locks: is saved on the device and is no longer cleared when you load a new sprite. Because area treatments are keyed by area position, the same class's other characters share the same layout, so your locks carry straight over: load the next character, export again. (Different class? Areas differ, so re-check or re-import a suitable macro.)
 
 **How to: bake red/green/blue × light/dark/locked in order**
 1. Schemes tab: roll & Export `.json` three libraries; import them on the Macro tab as sets "red", "green", "blue".
@@ -256,12 +256,12 @@ Output: all reds (× each master), then all greens, then all blues.
 
 Single-file and batch export, plus filename setup.
 
-- **Output structure** — Baked-in or Custom layout for the written files.
-- **Class base name** — The filename stem (Korean as-on-disk, or whatever your files use).
-- **Gender suffix** — Female (`_¿©`) / Male (`_³²`) buttons — applied to every exported filename.
-- **Palette #** — The number for a single save.
-- **Save .pal** — Save the current palette as one `.pal`.
-- **Batch (generated variants)** — Start # / Count / "Each variant uses" / Vary — produce a numbered run of variants and "Export batch as .zip".
+- **Output structure**: Baked-in or Custom layout for the written files.
+- **Class base name**: The filename stem (Korean as-on-disk, or whatever your files use).
+- **Gender suffix**: Female (`_¿©`) / Male (`_³²`) buttons: applied to every exported filename.
+- **Palette #**: The number for a single save.
+- **Save .pal**: Save the current palette as one `.pal`.
+- **Batch (generated variants)**: Start # / Count / "Each variant uses" / Vary: produce a numbered run of variants and "Export batch as .zip".
 
 The zip writer flags filenames as UTF-8 so Korean names extract correctly.
 
@@ -279,10 +279,10 @@ Wherever you set a colour (Palette tab "Pick", Areas recolour, Generate base col
 
 - A 2D Saturation × Value field (drag the circle).
 - A vertical Hue strip (drag up/down).
-- Editable H / S / V, R / G / B, and HEX fields — type into any of them.
+- Editable H / S / V, R / G / B, and HEX fields: type into any of them.
 - A live preview chip. It updates as you drag and closes when you click away.
 
-This is what lets you dial in brown, black, white, and muted shades precisely — which the old RGB-only input made awkward.
+This is what lets you dial in brown, black, white, and muted shades precisely: which the old RGB-only input made awkward.
 
 ---
 
@@ -293,7 +293,7 @@ Under the curated palettes (Generate tab) there is a paste field and a "+ Add" b
 - Paste a ColorHunt link, e.g. `https://colorhunt.co/palette/f5f5f5f2ead3dfd7bf3f2305` and press Add (or Enter).
 - The colours are read straight out of the link text, so it works completely offline (no network call, nothing to be blocked).
 - It also accepts a generic `.../palette/<hex>` URL, or raw hex codes such as `#FF6B6B, #FFD93D, #FF9F45` or `f5f5f5 f2ead3 dfd7bf`.
-- The new palette appears as a chip, is auto-selected, and behaves exactly like a built-in curated palette — including being rollable into a scheme set for the Macro.
+- The new palette appears as a chip, is auto-selected, and behaves exactly like a built-in curated palette: including being rollable into a scheme set for the Macro.
 - Custom palettes are saved on this device. Hover a custom chip to get a small ✕ to remove it (built-ins can't be removed).
 
 **Note:** a curated palette feeds the generator as a hue family spread across the areas (following the sprite's shading), not a literal one-colour-per-swatch fill.
@@ -337,10 +337,10 @@ Generate tab → paste the link in the curated field → Add → it's selected �
 
 ## 18. Tips & gotchas
 
-- Always Auto-detect areas after loading a class if you'll recolour parts or use the Macro/Schemes batch — areas are what locks and per-area treatments key off.
+- Always Auto-detect areas after loading a class if you'll recolour parts or use the Macro/Schemes batch: areas are what locks and per-area treatments key off.
 - Grey/washed-out result from a "monochromatic" set? Check the source scheme for a stray desaturated or blank index sitting in the colour ramp; one bad slot tints a whole area. Re-roll or fix that scheme.
 - Brown/white/black bases now work as expected in Generate because the base colour's saturation and lightness are used, not just its hue.
-- Black / White / Desat in the Macro are intentionally fixed — they ignore the master's Sat/Bri/Con and the scheme, so neutral-locked parts stay identical across the whole pack.
+- Black / White / Desat in the Macro are intentionally fixed: they ignore the master's Sat/Bri/Con and the scheme, so neutral-locked parts stay identical across the whole pack.
 - If exported palettes look scrambled in-game, flip the Baked-in / Custom layout toggle before exporting.
 - Transparency (index 0) and magenta slots are always protected; the tool will not recolour them.
 - Keep backups: use the Schemes and Macro Export .json buttons. Browser data can be cleared, and that takes the locally-saved plan/palettes with it.
